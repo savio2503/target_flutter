@@ -5,8 +5,8 @@ import '../add/add_screen.dart';
 
 final List<String> linhas = <String>['objetivo 1', 'objetivo 2', 'objetivo 3'];
 
-class MainListTarget extends StatelessWidget {
-  const MainListTarget({super.key});
+class MainScreen extends StatelessWidget {
+  const MainScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
