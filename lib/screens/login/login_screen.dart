@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:target_flutter/screens/signin/signin_screen.dart';
+import 'package:target_flutter/screens/signup/signup_screen.dart';
+
+import '../main/main_screen.dart';
 
 class LoginScreen extends StatelessWidget {
   @override
@@ -41,7 +43,13 @@ class LoginScreen extends StatelessWidget {
                     child: Column(
                       children: [
                         ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => MainListTarget()),
+                            );
+                          },
                           child: const Text("Login"),
                         ),
                         const SizedBox(height: 35),
@@ -50,7 +58,7 @@ class LoginScreen extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => SigninScreen()),
+                                  builder: (context) => SignupScreen()),
                             );
                           },
                           child: const Text(
