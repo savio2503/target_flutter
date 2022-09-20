@@ -17,12 +17,19 @@ abstract class _UserManagerStore with Store {
   @action
   void setUser(User? value) => user = value;
 
+  @observable
+  bool isLoading = false;
+
   @computed
   bool get isLoggedIn => user != null;
 
   Future<void> _getCurrentUser() async {
+    print('-> getCurrentUser');
+    isLoading = true;
     final user = await UserRepository().currentUser();
     setUser(user);
+    isLoading = false;
+    print('<- getCurrentUser');
   }
 
   Future<void> logout() async {

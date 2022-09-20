@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:target_flutter/screens/edit/edit_screen.dart';
+import 'package:target_flutter/stores/user_manager_store.dart';
 
 import '../add/add_screen.dart';
 
 final List<String> linhas = <String>['objetivo 1', 'objetivo 2', 'objetivo 3'];
 
 class MainScreen extends StatelessWidget {
-  const MainScreen({super.key});
+  final userManagerStore = GetIt.I<UserManagerStore>();
 
   @override
   Widget build(BuildContext context) {
@@ -17,6 +19,7 @@ class MainScreen extends StatelessWidget {
         automaticallyImplyLeading: false,
         leading: IconButton(
           onPressed: () {
+            userManagerStore.logout();
             Navigator.pop(context);
           },
           icon: const Icon(Icons.logout),

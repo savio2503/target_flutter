@@ -20,6 +20,11 @@ class LoginScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               mainAxisSize: MainAxisSize.min,
               children: [
+                const Image(
+                  image: AssetImage('assets/stocks.png'),
+                  height: 200, width: 200,
+                ),
+                const SizedBox(height: 20),
                 Observer(builder: (_) {
                   return Padding(
                     padding: const EdgeInsets.only(top: 8),

@@ -6,8 +6,9 @@ import 'parse_errors.dart';
 
 class UserRepository {
   Future<User> signUp(User user) async {
+    print('UserRepository.signUp: $user');
     final parseUser = ParseUser(
-      user.email,
+      user.user!,
       user.pass!,
       user.email,
     );
@@ -24,7 +25,7 @@ class UserRepository {
   }
 
   Future<User> loginWithEmail(String email, String password) async {
-    print('loginWithEmail()');
+    print('UserRepository.loginWithEmail: $email, $password');
     final parseUser = ParseUser(email, password, null);
 
     final response = await parseUser.login();
@@ -39,7 +40,7 @@ class UserRepository {
   }
 
   User mapParseToUser(ParseUser parseUser) {
-    print('mapParserToUser = $parseUser');
+    print('UserRepository.mapParserToUser = $parseUser');
     return User(
       user: parseUser.get(keyUserName),
       email: parseUser.get(keyUserEmail),
@@ -49,6 +50,7 @@ class UserRepository {
   }
 
   Future<User?> currentUser() async {
+    print('UserRepository.currentUser');
     final parseUser = await ParseUser.currentUser();
 
     if (parseUser != null) {
@@ -65,6 +67,7 @@ class UserRepository {
   }
 
   Future<void> save(User user) async {
+    print('UserRepository.save $user');
     final ParseUser parseUser = await ParseUser.currentUser();
 
     if (parseUser != null) {
@@ -94,6 +97,7 @@ class UserRepository {
   }
 
   Future<void> logout() async {
+    print('UserRepository.logout');
     final ParseUser currentUser = await ParseUser.currentUser();
     await currentUser.logout();
   }

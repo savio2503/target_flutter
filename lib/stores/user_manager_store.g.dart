@@ -33,6 +33,22 @@ mixin _$UserManagerStore on _UserManagerStore, Store {
     });
   }
 
+  late final _$isLoadingAtom =
+      Atom(name: '_UserManagerStore.isLoading', context: context);
+
+  @override
+  bool get isLoading {
+    _$isLoadingAtom.reportRead();
+    return super.isLoading;
+  }
+
+  @override
+  set isLoading(bool value) {
+    _$isLoadingAtom.reportWrite(value, super.isLoading, () {
+      super.isLoading = value;
+    });
+  }
+
   late final _$_UserManagerStoreActionController =
       ActionController(name: '_UserManagerStore', context: context);
 
@@ -51,6 +67,7 @@ mixin _$UserManagerStore on _UserManagerStore, Store {
   String toString() {
     return '''
 user: ${user},
+isLoading: ${isLoading},
 isLoggedIn: ${isLoggedIn}
     ''';
   }
