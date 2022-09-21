@@ -5,6 +5,7 @@ import 'package:target_flutter/screens/load/load_screen.dart';
 import 'package:target_flutter/stores/user_manager_store.dart';
 
 import 'screens/login/login_screen.dart';
+import 'stores/main_store.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,6 +15,7 @@ void main() async {
 }
 
 void setupLocators() {
+  GetIt.I.registerSingleton(MainStore());
   GetIt.I.registerSingleton(UserManagerStore());
 }
 
