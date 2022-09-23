@@ -6,7 +6,7 @@ import 'parse_errors.dart';
 
 class TargetRepository {
   Future<List<Target>> getMainTargetList({required int page}) async {
-    print('1getMainTargetList $page');
+    //print('1getMainTargetList $page');
     try {
       final queryBuilder =
           QueryBuilder<ParseObject>(ParseObject(keyTargetTable));
@@ -17,7 +17,7 @@ class TargetRepository {
 
       final response = await queryBuilder.query();
 
-      print('2getMainTargetList ${response.results}');
+      //print('2getMainTargetList ${response.results}');
 
       if (response.success && response.results != null) {
         return response.results!.map((po) => Target.fromParse(po)).toList();
@@ -31,7 +31,7 @@ class TargetRepository {
     }
   }
 
-  Future<void> save(Target target) async {
+  Future<Target> save(Target target) async {
     print('1TargetRepository: $target');
     try {
       final parseUser = ParseUser('', '', '')..set(keyUserId, target.user!.id!);
@@ -46,12 +46,16 @@ class TargetRepository {
       targetObject.setACL(parseAcl);
 
       targetObject.set<String>(keyTargetDescricao, target.descricao!);
-      targetObject.set<double>(keyTargetFinal, target.valorFinal!);
+      targetObject.set<num>(keyTargetFinal, target.valorFinal!);
+
+      targetObject.set<String>(keyTargetUser, target.user!.id!);
 
       final response = await targetObject.save();
 
       if (!response.success) {
         return Future.error(ParseErrors.getDescription(response.error!.code));
+      } else {
+        return Target.fromParse(response.result);
       }
     } catch (e) {
       return Future.error('Falha ao salvar anúncio');

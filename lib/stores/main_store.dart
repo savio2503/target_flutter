@@ -10,17 +10,23 @@ class MainStore = _MainStore with _$MainStore;
 abstract class _MainStore with Store {
   _MainStore() {
     autorun((_) async {
-      try {
-        setLoading(true);
-        final newTargets =
-            await TargetRepository().getMainTargetList(page: page);
-        addNewTargets(newTargets);
-        setError(null);
-        setLoading(false);
-      } catch (e) {
-        setError(e.toString());
-      }
+      await reload();
     });
+  }
+
+  reload() async {
+    try {
+      resetPage();
+      setLoading(true);
+      final newTargets = await TargetRepository().getMainTargetList(page: page);
+      addNewTargets(newTargets);
+      print('setError(null)');
+      setError(null);
+      setLoading(false);
+    } catch (e) {
+      print('setError(${e.toString()})');
+      setError(e.toString());
+    }
   }
 
   ObservableList<Target> targetList = ObservableList<Target>();

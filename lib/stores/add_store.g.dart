@@ -138,6 +138,22 @@ mixin _$AddStore on _AddStore, Store {
     });
   }
 
+  late final _$_contextAtom =
+      Atom(name: '_AddStore._context', context: context);
+
+  @override
+  BuildContext? get _context {
+    _$_contextAtom.reportRead();
+    return super._context;
+  }
+
+  @override
+  set _context(BuildContext? value) {
+    _$_contextAtom.reportWrite(value, super._context, () {
+      super._context = value;
+    });
+  }
+
   late final _$_sendAsyncAction =
       AsyncAction('_AddStore._send', context: context);
 
@@ -177,6 +193,17 @@ mixin _$AddStore on _AddStore, Store {
         name: '_AddStore.setValorFinal');
     try {
       return super.setValorFinal(value);
+    } finally {
+      _$_AddStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setContext(BuildContext value) {
+    final _$actionInfo =
+        _$_AddStoreActionController.startAction(name: '_AddStore.setContext');
+    try {
+      return super.setContext(value);
     } finally {
       _$_AddStoreActionController.endAction(_$actionInfo);
     }

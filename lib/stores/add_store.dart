@@ -1,9 +1,12 @@
+import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobx/mobx.dart';
 import 'package:target_flutter/repository/target_repository.dart';
+import 'package:target_flutter/stores/debit_store.dart';
 import 'package:target_flutter/stores/user_manager_store.dart';
 
 import '../model/target.dart';
+import 'main_store.dart';
 
 part 'add_store.g.dart';
 
@@ -28,12 +31,14 @@ abstract class _AddStore with Store {
   @observable
   bool saveTarget = false;
 
+  @observable
+  BuildContext? _context;
+
   @action
   void setDescricao(String value) => descricao = value;
 
   @computed
   bool get descricaoValid => descricao.isNotEmpty;
-
   String? get descricaoError {
     if (descricaoValid) {
       return null;
@@ -46,14 +51,13 @@ abstract class _AddStore with Store {
   void setValorInicial(double value) => valorInicial = value;
 
   @computed
-  bool get valorInicialValid => valorInicial > 0;
+  bool get valorInicialValid => valorInicial >= 0;
 
   @action
   void setValorFinal(double value) => valorFinal = value;
 
   @computed
-  bool get valorFinalValid => valorInicial > 0;
-
+  bool get valorFinalValid => valorFinal > 0;
   String? get valorFinalError {
     if (valorFinalValid) {
       return null;
@@ -65,11 +69,15 @@ abstract class _AddStore with Store {
   @computed
   bool get formValid => descricaoValid && valorFinalValid;
 
+  @action
+  void setContext(BuildContext value) => _context = value;
+
   @computed
   Function() get sendPressed => formValid ? _send : () {};
 
   @action
   Future<void> _send() async {
+    print('chamou o _send');
     Target _target = Target(
       descricao: descricao,
       valorFinal: valorFinal,
@@ -79,8 +87,19 @@ abstract class _AddStore with Store {
     loading = true;
 
     try {
-      await TargetRepository().save(_target);
+      print('enviando o target');
+
+      Target targetResult = await TargetRepository().save(_target);
+      targetResult.user = _target.user;
+
+      print('targetResult: $targetResult');
+
+      if (valorInicial > 0.0) {
+        await DebitStore().saveDebit(valorInicial, targetResult);
+      }
       saveTarget = true;
+      await GetIt.I<MainStore>().reload();
+      Navigator.of(_context!).pop();
     } catch (e) {
       error = e.toString();
     }

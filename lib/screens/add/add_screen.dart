@@ -138,7 +138,12 @@ class AddTarget extends StatelessWidget {
                                       valueColor:
                                           AlwaysStoppedAnimation(Colors.white))
                                   : Text('CADASTRAR'),
-                              onPressed: addStore.sendPressed,
+                              onPressed: () {
+                                print(
+                                    'presionou o cadastrar, valid: ${addStore.formValid}: des = ${addStore.descricaoValid} + final: ${addStore.valorFinalValid}');
+                                addStore.setContext(context);
+                                addStore.sendPressed();
+                              },
                             ),
                           );
                         })
