@@ -84,6 +84,15 @@ mixin _$MainStore on _MainStore, Store {
     });
   }
 
+  late final _$addNewTargetsAsyncAction =
+      AsyncAction('_MainStore.addNewTargets', context: context);
+
+  @override
+  Future<void> addNewTargets(List<Target> newTargets) {
+    return _$addNewTargetsAsyncAction
+        .run(() => super.addNewTargets(newTargets));
+  }
+
   late final _$_MainStoreActionController =
       ActionController(name: '_MainStore', context: context);
 
@@ -104,17 +113,6 @@ mixin _$MainStore on _MainStore, Store {
         _$_MainStoreActionController.startAction(name: '_MainStore.setError');
     try {
       return super.setError(value);
-    } finally {
-      _$_MainStoreActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
-  void addNewTargets(List<Target> newTargets) {
-    final _$actionInfo = _$_MainStoreActionController.startAction(
-        name: '_MainStore.addNewTargets');
-    try {
-      return super.addNewTargets(newTargets);
     } finally {
       _$_MainStoreActionController.endAction(_$actionInfo);
     }

@@ -40,7 +40,7 @@ class UserRepository {
   }
 
   User mapParseToUser(ParseUser parseUser) {
-    print('UserRepository.mapParserToUser = $parseUser');
+    //print('UserRepository.mapParserToUser = $parseUser');
     return User(
       user: parseUser.get(keyUserName),
       email: parseUser.get(keyUserEmail),

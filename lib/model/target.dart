@@ -9,7 +9,9 @@ import 'user.dart';
 class Target {
   String? id;
   String? descricao;
+  num? valorAtual;
   num? valorFinal;
+  num? progress;
   User? user;
 
   Target({this.id, this.descricao, this.valorFinal, this.user});

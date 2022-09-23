@@ -24,7 +24,7 @@ Future<void> initializeParse() async {
       'https://parseapi.back4app.com/',
       clientKey: 'Mz67KJ18u6XkjDbpXYuBcjBhJLVNYSSdcferLYJ2',
       autoSendSessionId: true,
-      debug: true);
+      debug: false);
 }
 
 class MyApp extends StatelessWidget {

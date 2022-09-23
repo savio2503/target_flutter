@@ -107,11 +107,16 @@ class _MainScreenState extends State<MainScreen> {
                         controller: scrollController,
                         itemCount: mainStore.itemCount,
                         itemBuilder: (_, index) {
-                          print(
-                              'index: $index + total: ${mainStore.targetList.length} + target: ${mainStore.targetList[index]}');
-
-                          if (index < mainStore.targetList.length) {
-                            return Card(
+                          print( 'index: $index + total: ${mainStore.targetList.length} + target: ${mainStore.targetList[index]}');
+                          //print('index: $index');
+                          //if (index < mainStore.targetList.length) {
+                          return InkWell(
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(builder: (_) => EditTarget(index)),
+                              );
+                            },
+                            child: Card(
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 30, vertical: 10),
@@ -133,7 +138,13 @@ class _MainScreenState extends State<MainScreen> {
                                           style: styleNormal,
                                         ),
                                         Text(
-                                          'R\$ 10,00',
+                                          mainStore.targetList[index]
+                                                      .valorAtual !=
+                                                  null
+                                              ? mainStore
+                                                  .targetList[index].valorAtual!
+                                                  .formattedMoney()
+                                              : 'R\$ 0,00',
                                           style: styleNormal,
                                         ),
                                       ],
@@ -158,28 +169,32 @@ class _MainScreenState extends State<MainScreen> {
                                       ],
                                     ),
                                     Text(
-                                      '10.00%',
+                                      mainStore.targetList[index].progress!
+                                          .formattedPercentage(),
                                       style: styleNormal,
                                     ),
                                     const SizedBox(
                                       height: 10,
                                     ),
                                     LinearProgressIndicator(
-                                      value: 0.1,
+                                      value: (mainStore
+                                              .targetList[index].progress! /
+                                          100),
                                       color: Colors.blue,
                                     ),
                                   ],
                                 ),
                               ),
-                            );
-                          }
-                          mainStore.loadNextPage();
-                          return Container(
+                            ),
+                          );
+                          //}
+                          //mainStore.loadNextPage();
+                          /*return Container(
                             height: 10,
                             child: LinearProgressIndicator(
                               valueColor: AlwaysStoppedAnimation(Colors.blue),
                             ),
-                          );
+                          );*/
                         },
                       );
                     }

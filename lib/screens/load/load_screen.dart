@@ -18,7 +18,7 @@ class _LoadScreenState extends State<LoadScreen> {
   @override
   void initState() {
     autorun((_) {
-      print('userLoad: ${userManagerStore.user}');
+      //print('userLoad: ${userManagerStore.user}');
       Future.delayed(Duration(milliseconds: 1000)).then((_) {});
       if (!userManagerStore.isLoading) {
         if (userManagerStore.isLoggedIn) {

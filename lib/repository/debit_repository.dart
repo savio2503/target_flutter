@@ -6,8 +6,47 @@ import 'package:target_flutter/repository/table_keys.dart';
 import '../model/target.dart';
 
 class DebitRepository {
+  Future<num> getSomeDebitFromTarget(Target target) async {
+    try {
+      print('getSomeDebitFromTarget');
+      //final currentUser = ParseUser('', '', '')..set(keyUserId, target.user!);
+      final targetObject = ParseObject(keyTargetTable)
+        ..set(keyTargetId, target.id!);
+      final queryBuilder =
+          QueryBuilder<ParseObject>(ParseObject(keyDebitTable));
+
+      queryBuilder.orderByDescending(keyDebitData);
+      //queryBuilder.whereEqualTo(keyDebitUser, currentUser.toPointer());
+      queryBuilder.whereEqualTo(keyDebitTarget, targetObject.toPointer());
+
+      //print('getSomeDebitFromTarget, query: $queryBuilder');
+
+      final response = await queryBuilder.query();
+
+      if (response.success && response.results != null) {
+        List<Debit> debits =
+            response.results!.map((de) => Debit.fromParse(de)).toList();
+
+        num some = 0;
+
+        for (var debit in debits) {
+          some += debit.valor!;
+        }
+
+        return some;
+      } else if (response.success && response.results == null) {
+        return 0;
+      } else {
+        return Future.error(ParseErrors.getDescription(response.error!.code));
+      }
+    } catch (e) {
+      return Future.error('error ao buscar os debitos');
+    }
+  }
+
   Future<Debit> save(Debit debit) async {
     try {
+      print('save');
       final parseUser = ParseUser('', '', '')..set(keyUserId, debit.user!.id!);
 
       final debitObject = ParseObject(keyDebitTable);
@@ -37,6 +76,7 @@ class DebitRepository {
 
   Future<List<Debit>> getAllDebit(Target target) async {
     try {
+      print('getAllDebit');
       final currentUser = ParseUser('', '', '')..set(keyUserId, target.user!);
       final targetObject = ParseObject(keyTargetTable)
         ..set(keyTargetId, target.id!);

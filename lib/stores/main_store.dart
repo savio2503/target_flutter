@@ -1,5 +1,6 @@
 import 'package:mobx/mobx.dart';
 import 'package:target_flutter/model/target.dart';
+import 'package:target_flutter/repository/debit_repository.dart';
 
 import '../repository/target_repository.dart';
 
@@ -18,8 +19,8 @@ abstract class _MainStore with Store {
     try {
       resetPage();
       setLoading(true);
-      final newTargets = await TargetRepository().getMainTargetList(page: page);
-      addNewTargets(newTargets);
+      final newTargets = await TargetRepository().getMainTargetList();
+      await addNewTargets(newTargets);
       print('setError(null)');
       setError(null);
       setLoading(false);
@@ -50,10 +51,18 @@ abstract class _MainStore with Store {
   void setError(String? value) => error = value;
 
   @action
-  void addNewTargets(List<Target> newTargets) {
-    if (newTargets.length < 10) lastPage = true;
-    targetList.addAll(newTargets);
-    print('addNewTargets: ${targetList.toString()}');
+  Future<void> addNewTargets(List<Target> newTargets) async {
+    resetPage();
+    for (var localTarget in newTargets) {
+      print('add on list: ${localTarget.descricao}');
+      localTarget.valorAtual =
+          await DebitRepository().getSomeDebitFromTarget(localTarget);
+
+      localTarget.progress =
+          ((localTarget.valorAtual! * 100) / localTarget.valorFinal!);
+
+      targetList.add(localTarget);
+    }
   }
 
   @action
@@ -62,7 +71,7 @@ abstract class _MainStore with Store {
   }
 
   @computed
-  int get itemCount => lastPage ? targetList.length : targetList.length + 1;
+  int get itemCount => targetList.length;
 
   void resetPage() {
     page = 0;

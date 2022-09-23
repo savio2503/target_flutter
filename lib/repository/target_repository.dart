@@ -5,13 +5,11 @@ import '../model/target.dart';
 import 'parse_errors.dart';
 
 class TargetRepository {
-  Future<List<Target>> getMainTargetList({required int page}) async {
+  Future<List<Target>> getMainTargetList() async {
     //print('1getMainTargetList $page');
     try {
       final queryBuilder =
           QueryBuilder<ParseObject>(ParseObject(keyTargetTable));
-
-      queryBuilder.setLimit(10);
 
       queryBuilder.orderByAscending(keyTargetDescricao);
 
