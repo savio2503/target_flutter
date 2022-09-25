@@ -13,6 +13,10 @@ extension NumberExtension on num {
     return NumberFormat('R\$ ###,##0.00', 'pt-BR').format(this);
   }
 
+  String formatted() {
+    return NumberFormat('###,##0.00', 'pt-BR').format(this);
+  }
+
   String formattedPercentage() {
     return NumberFormat('0.00', 'pt-BR').format(this) + ' %';
   }

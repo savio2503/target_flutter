@@ -17,12 +17,17 @@ abstract class _MainStore with Store {
 
   reload() async {
     try {
+      print('resetPage');
       resetPage();
+      print('setLoading true');
       setLoading(true);
+      print('getMainTargetList');
       final newTargets = await TargetRepository().getMainTargetList();
+      print('addNewTargets');
       await addNewTargets(newTargets);
       print('setError(null)');
       setError(null);
+      print('setLoading false');
       setLoading(false);
     } catch (e) {
       print('setError(${e.toString()})');

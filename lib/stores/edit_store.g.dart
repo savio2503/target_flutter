@@ -1,0 +1,119 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+part of 'edit_store.dart';
+
+// **************************************************************************
+// StoreGenerator
+// **************************************************************************
+
+// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
+
+mixin _$EditStore on _EditStore, Store {
+  Computed<bool>? _$descricaoValidComputed;
+
+  @override
+  bool get descricaoValid =>
+      (_$descricaoValidComputed ??= Computed<bool>(() => super.descricaoValid,
+              name: '_EditStore.descricaoValid'))
+          .value;
+  Computed<bool>? _$finalValidComputed;
+
+  @override
+  bool get finalValid => (_$finalValidComputed ??=
+          Computed<bool>(() => super.finalValid, name: '_EditStore.finalValid'))
+      .value;
+
+  late final _$descricaoAtom =
+      Atom(name: '_EditStore.descricao', context: context);
+
+  @override
+  String? get descricao {
+    _$descricaoAtom.reportRead();
+    return super.descricao;
+  }
+
+  @override
+  set descricao(String? value) {
+    _$descricaoAtom.reportWrite(value, super.descricao, () {
+      super.descricao = value;
+    });
+  }
+
+  late final _$valorFinalAtom =
+      Atom(name: '_EditStore.valorFinal', context: context);
+
+  @override
+  num? get valorFinal {
+    _$valorFinalAtom.reportRead();
+    return super.valorFinal;
+  }
+
+  @override
+  set valorFinal(num? value) {
+    _$valorFinalAtom.reportWrite(value, super.valorFinal, () {
+      super.valorFinal = value;
+    });
+  }
+
+  late final _$loadingAtom = Atom(name: '_EditStore.loading', context: context);
+
+  @override
+  bool get loading {
+    _$loadingAtom.reportRead();
+    return super.loading;
+  }
+
+  @override
+  set loading(bool value) {
+    _$loadingAtom.reportWrite(value, super.loading, () {
+      super.loading = value;
+    });
+  }
+
+  late final _$_EditStoreActionController =
+      ActionController(name: '_EditStore', context: context);
+
+  @override
+  dynamic setTarget(Target target) {
+    final _$actionInfo =
+        _$_EditStoreActionController.startAction(name: '_EditStore.setTarget');
+    try {
+      return super.setTarget(target);
+    } finally {
+      _$_EditStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setDescricao(String? value) {
+    final _$actionInfo = _$_EditStoreActionController.startAction(
+        name: '_EditStore.setDescricao');
+    try {
+      return super.setDescricao(value);
+    } finally {
+      _$_EditStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setFinal(num? value) {
+    final _$actionInfo =
+        _$_EditStoreActionController.startAction(name: '_EditStore.setFinal');
+    try {
+      return super.setFinal(value);
+    } finally {
+      _$_EditStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  String toString() {
+    return '''
+descricao: ${descricao},
+valorFinal: ${valorFinal},
+loading: ${loading},
+descricaoValid: ${descricaoValid},
+finalValid: ${finalValid}
+    ''';
+  }
+}
