@@ -13,6 +13,7 @@ class Target {
   num? valorFinal;
   num? progress;
   User? user;
+  DateTime? createAd;
 
   Target({this.id, this.descricao, this.valorFinal, this.user});
 
@@ -21,10 +22,11 @@ class Target {
     descricao = object.get<String>(keyTargetDescricao);
     valorFinal = object.get<num>(keyTargetFinal);
     //user = GetIt.I<UserManagerStore>().user!;
+    createAd = object.get<DateTime>(keyDebitData);
   }
 
   @override
   String toString() {
-    return "Target = {id: $id, descricao: $descricao, valorFinal: $valorFinal, user: $user}";
+    return "Target = {id: $id, descricao: $descricao, valorFinal: $valorFinal, user: $user, create: $createAd}";
   }
 }

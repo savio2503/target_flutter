@@ -9,6 +9,7 @@ const keyTargetTable = 'Target';
 const keyTargetDescricao = 'descricao';
 const keyTargetFinal = 'valorFinal';
 const keyTargetUser = 'usuario';
+const keyTargetData = 'createdAt';
 
 const keyDebitId = 'objectId';
 const keyDebitTable = 'Debit';

@@ -11,7 +11,7 @@ class TargetRepository {
       final queryBuilder =
           QueryBuilder<ParseObject>(ParseObject(keyTargetTable));
 
-      queryBuilder.orderByAscending(keyTargetDescricao);
+      queryBuilder.orderByAscending(keyTargetData);
 
       final response = await queryBuilder.query();
 
