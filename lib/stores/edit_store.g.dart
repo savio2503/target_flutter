@@ -22,6 +22,13 @@ mixin _$EditStore on _EditStore, Store {
   bool get finalValid => (_$finalValidComputed ??=
           Computed<bool>(() => super.finalValid, name: '_EditStore.finalValid'))
       .value;
+  Computed<bool>? _$valorDepositarValidComputed;
+
+  @override
+  bool get valorDepositarValid => (_$valorDepositarValidComputed ??=
+          Computed<bool>(() => super.valorDepositarValid,
+              name: '_EditStore.valorDepositarValid'))
+      .value;
 
   late final _$descricaoAtom =
       Atom(name: '_EditStore.descricao', context: context);
@@ -70,19 +77,40 @@ mixin _$EditStore on _EditStore, Store {
     });
   }
 
-  late final _$_EditStoreActionController =
-      ActionController(name: '_EditStore', context: context);
+  late final _$valorADepositarAtom =
+      Atom(name: '_EditStore.valorADepositar', context: context);
 
   @override
-  dynamic setTarget(Target target) {
-    final _$actionInfo =
-        _$_EditStoreActionController.startAction(name: '_EditStore.setTarget');
-    try {
-      return super.setTarget(target);
-    } finally {
-      _$_EditStoreActionController.endAction(_$actionInfo);
-    }
+  num? get valorADepositar {
+    _$valorADepositarAtom.reportRead();
+    return super.valorADepositar;
   }
+
+  @override
+  set valorADepositar(num? value) {
+    _$valorADepositarAtom.reportWrite(value, super.valorADepositar, () {
+      super.valorADepositar = value;
+    });
+  }
+
+  late final _$setTargetAsyncAction =
+      AsyncAction('_EditStore.setTarget', context: context);
+
+  @override
+  Future<void> setTarget(Target target) {
+    return _$setTargetAsyncAction.run(() => super.setTarget(target));
+  }
+
+  late final _$reloadDebitAsyncAction =
+      AsyncAction('_EditStore.reloadDebit', context: context);
+
+  @override
+  Future<void> reloadDebit(Target target) {
+    return _$reloadDebitAsyncAction.run(() => super.reloadDebit(target));
+  }
+
+  late final _$_EditStoreActionController =
+      ActionController(name: '_EditStore', context: context);
 
   @override
   void setDescricao(String? value) {
@@ -107,13 +135,37 @@ mixin _$EditStore on _EditStore, Store {
   }
 
   @override
+  void setDebit(Debit debit) {
+    final _$actionInfo =
+        _$_EditStoreActionController.startAction(name: '_EditStore.setDebit');
+    try {
+      return super.setDebit(debit);
+    } finally {
+      _$_EditStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setValorDepositar(num? value) {
+    final _$actionInfo = _$_EditStoreActionController.startAction(
+        name: '_EditStore.setValorDepositar');
+    try {
+      return super.setValorDepositar(value);
+    } finally {
+      _$_EditStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
 descricao: ${descricao},
 valorFinal: ${valorFinal},
 loading: ${loading},
+valorADepositar: ${valorADepositar},
 descricaoValid: ${descricaoValid},
-finalValid: ${finalValid}
+finalValid: ${finalValid},
+valorDepositarValid: ${valorDepositarValid}
     ''';
   }
 }

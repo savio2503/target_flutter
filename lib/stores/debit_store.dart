@@ -1,7 +1,9 @@
+import 'package:get_it/get_it.dart';
 import 'package:mobx/mobx.dart';
 import 'package:target_flutter/model/debit.dart';
 import 'package:target_flutter/model/target.dart';
 import 'package:target_flutter/repository/debit_repository.dart';
+import 'package:target_flutter/stores/user_manager_store.dart';
 
 part 'debit_store.g.dart';
 
@@ -22,7 +24,7 @@ abstract class _DebitStore with Store {
 
   Future<Debit?> saveDebit(num valor, Target target) async {
     try {
-      Debit debit = Debit(valor: valor, target: target, user: target.user!);
+      Debit debit = Debit(valor: valor, target: target, user: GetIt.I<UserManagerStore>().user);
 
       Debit result = await DebitRepository().save(debit);
 

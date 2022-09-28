@@ -58,7 +58,7 @@ abstract class _LoginStore with Store {
 
     try {
       final user = await UserRepository().loginWithEmail(email!, password!);
-      print('user: $user');
+      print('user _login: $user');
       GetIt.I<UserManagerStore>().setUser(user);
       print('usuario logado: ${user.user}');
       Navigator.push(

@@ -51,17 +51,24 @@ class DebitRepository {
 
       final debitObject = ParseObject(keyDebitTable);
 
+      print('0');
+
       if (debit.id != null) debitObject.objectId = debit.id!;
+      
+      print('1');
 
       final parseAcl = ParseACL(owner: parseUser);
       parseAcl.setPublicReadAccess(allowed: true);
       parseAcl.setPublicWriteAccess(allowed: false);
       debitObject.setACL(parseAcl);
 
+      print('2');
+
       debitObject.set<num>(keyDebitValor, debit.valor!);
       debitObject.set<ParseObject>(keyDebitTarget,
           ParseObject(keyTargetTable)..set(keyTargetId, debit.target!.id!));
 
+      print('3');
       final response = await debitObject.save();
 
       if (!response.success) {
@@ -70,21 +77,21 @@ class DebitRepository {
         return Debit.fromParse(response.result);
       }
     } catch (e) {
-      return Future.error("Erro ao salvar o debito");
+      return Future.error(e.toString());
     }
   }
 
   Future<List<Debit>> getAllDebit(Target target) async {
     try {
       print('getAllDebit');
-      final currentUser = ParseUser('', '', '')..set(keyUserId, target.user!);
       final targetObject = ParseObject(keyTargetTable)
         ..set(keyTargetId, target.id!);
       final queryBuilder =
           QueryBuilder<ParseObject>(ParseObject(keyDebitTable));
 
       queryBuilder.orderByDescending(keyDebitData);
-      queryBuilder.whereEqualTo(keyDebitUser, currentUser.toPointer());
+      //queryBuilder.whereEqualTo(keyDebitUser, currentUser.toPointer());
+      print('target pointer: ${targetObject.toPointer()}');
       queryBuilder.whereEqualTo(keyDebitTarget, targetObject.toPointer());
 
       final response = await queryBuilder.query();

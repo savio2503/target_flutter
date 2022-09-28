@@ -1,7 +1,12 @@
+import 'dart:io';
+
+import 'package:get_it/get_it.dart';
 import 'package:mobx/mobx.dart';
 import 'package:target_flutter/model/target.dart';
 import 'package:target_flutter/repository/debit_repository.dart';
+import 'package:target_flutter/stores/user_manager_store.dart';
 
+import '../model/user.dart';
 import '../repository/target_repository.dart';
 
 part 'main_store.g.dart';
@@ -10,27 +15,35 @@ class MainStore = _MainStore with _$MainStore;
 
 abstract class _MainStore with Store {
   _MainStore() {
-    autorun((_) async {
-      await reload();
-    });
+    reload();
   }
 
-  reload() async {
+  Future<void> reload() async {
     try {
-      print('resetPage');
-      resetPage();
-      print('setLoading true');
-      setLoading(true);
-      print('getMainTargetList');
-      final newTargets = await TargetRepository().getMainTargetList();
-      print('addNewTargets');
-      await addNewTargets(newTargets);
-      print('setError(null)');
-      setError(null);
-      print('setLoading false');
-      setLoading(false);
+      print('wait delay');
+      await Future.delayed(Duration(seconds: 1));
+      print('delay finished');
+      User? user = GetIt.I<UserManagerStore>().user;
+      if (user != null) {
+        print('user Main -> $user');
+        print('resetPage');
+        resetPage();
+        targetList.clear();
+        print('setLoading true');
+        setLoading(true);
+        print('getMainTargetList');
+        final newTargets = await TargetRepository().getMainTargetList(user);
+        print('addNewTargets');
+        await addNewTargets(newTargets);
+        print('setError(null)');
+        setError(null);
+        print('setLoading false');
+        setLoading(false);
+      } else {
+        print('User null main');
+      }
     } catch (e) {
-      print('setError(${e.toString()})');
+      //print('setError(${e.toString()})');
       setError(e.toString());
     }
   }
@@ -58,15 +71,27 @@ abstract class _MainStore with Store {
   @action
   Future<void> addNewTargets(List<Target> newTargets) async {
     resetPage();
-    for (var localTarget in newTargets) {
-      print('add on list: ${localTarget.descricao}');
-      localTarget.valorAtual =
-          await DebitRepository().getSomeDebitFromTarget(localTarget);
+    print('newTargets size: ${newTargets.length}');
+    for (int i = 0; i < newTargets.length; i++) {
+      print('add on list: ${newTargets[i].descricao}');
+      newTargets[i].valorAtual =
+          await DebitRepository().getSomeDebitFromTarget(newTargets[i]);
 
-      localTarget.progress =
-          ((localTarget.valorAtual! * 100) / localTarget.valorFinal!);
+      newTargets[i].progress =
+          ((newTargets[i].valorAtual! * 100) / newTargets[i].valorFinal!);
+    }
+    /*newTargets.forEach((element) async {
+      print('add on list: ${element.descricao}');
+      element.valorAtual =
+          await DebitRepository().getSomeDebitFromTarget(element);
 
-      targetList.add(localTarget);
+      element.progress = ((element.valorAtual! * 100) / element.valorFinal!);
+    });*/
+
+    print('size now list target: ${targetList.length}');
+
+    if (targetList.isEmpty) {
+      targetList.addAll(newTargets);
     }
   }
 

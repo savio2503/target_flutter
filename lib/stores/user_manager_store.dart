@@ -1,6 +1,8 @@
+import 'package:get_it/get_it.dart';
 import 'package:mobx/mobx.dart';
 import 'package:target_flutter/model/user.dart';
 import 'package:target_flutter/repository/user_repository.dart';
+import 'package:target_flutter/stores/main_store.dart';
 
 part 'user_manager_store.g.dart';
 
@@ -35,5 +37,6 @@ abstract class _UserManagerStore with Store {
   Future<void> logout() async {
     await UserRepository().logout();
     setUser(null);
+    GetIt.I<MainStore>().targetList.clear();
   }
 }

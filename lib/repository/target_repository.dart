@@ -2,16 +2,20 @@ import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 import 'package:target_flutter/repository/table_keys.dart';
 
 import '../model/target.dart';
+import '../model/user.dart';
 import 'parse_errors.dart';
 
 class TargetRepository {
-  Future<List<Target>> getMainTargetList() async {
+  Future<List<Target>> getMainTargetList(User user) async {
     //print('1getMainTargetList $page');
     try {
       final queryBuilder =
           QueryBuilder<ParseObject>(ParseObject(keyTargetTable));
 
       queryBuilder.orderByAscending(keyTargetData);
+      queryBuilder.whereEqualTo(keyTargetUser, user.id!);
+
+      print('getMainTargetList userId : ${user.id}');
 
       final response = await queryBuilder.query();
 

@@ -15,16 +15,18 @@ void main() async {
 }
 
 void setupLocators() {
-  GetIt.I.registerSingleton(MainStore());
   GetIt.I.registerSingleton(UserManagerStore());
+  GetIt.I.registerSingleton(MainStore());
 }
 
 Future<void> initializeParse() async {
-  await Parse().initialize('8uFlHKY1yHG6cSC6Eme1O1RF5w2aGx7FxccVduNR',
-      'https://parseapi.back4app.com/',
-      clientKey: 'Mz67KJ18u6XkjDbpXYuBcjBhJLVNYSSdcferLYJ2',
-      autoSendSessionId: true,
-      debug: false);
+  await Parse().initialize(
+    '8uFlHKY1yHG6cSC6Eme1O1RF5w2aGx7FxccVduNR',
+    'https://parseapi.back4app.com/',
+    clientKey: 'Mz67KJ18u6XkjDbpXYuBcjBhJLVNYSSdcferLYJ2',
+    autoSendSessionId: true,
+    debug: false,
+  );
 }
 
 class MyApp extends StatelessWidget {

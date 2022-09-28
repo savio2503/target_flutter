@@ -19,6 +19,12 @@ class _MainScreenState extends State<MainScreen> {
   final userManagerStore = GetIt.I<UserManagerStore>();
 
   @override
+  void initState() {
+    mainStore.reload();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final styleTitle = TextStyle(
       fontSize: 20,
@@ -107,14 +113,17 @@ class _MainScreenState extends State<MainScreen> {
                         controller: scrollController,
                         itemCount: mainStore.itemCount,
                         itemBuilder: (_, index) {
-                          print( 'index: $index + total: ${mainStore.targetList.length} + target: ${mainStore.targetList[index]}');
+                          //print('index: $index + total: ${mainStore.targetList.length} + target: ${mainStore.targetList[index]}');
                           //print('index: $index');
                           //if (index < mainStore.targetList.length) {
                           return InkWell(
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(builder: (_) => EditTarget(index)),
+                            onTap: () async {
+                              final result = await Navigator.of(context).push(
+                                MaterialPageRoute(
+                                    builder: (_) => EditTarget(index)),
                               );
+
+                              mainStore.reload();
                             },
                             child: Card(
                               child: Padding(
@@ -169,16 +178,21 @@ class _MainScreenState extends State<MainScreen> {
                                       ],
                                     ),
                                     Text(
-                                      mainStore.targetList[index].progress!
-                                          .formattedPercentage(),
+                                      mainStore.targetList[index].progress !=
+                                              null
+                                          ? mainStore
+                                              .targetList[index].progress!
+                                              .formattedPercentage()
+                                          : '0.0 %',
                                       style: styleNormal,
                                     ),
                                     const SizedBox(
                                       height: 10,
                                     ),
                                     LinearProgressIndicator(
-                                      value: (mainStore
-                                              .targetList[index].progress! /
+                                      value: ((mainStore
+                                                  .targetList[index].progress ??
+                                              0) /
                                           100),
                                       color: Colors.blue,
                                     ),
@@ -187,14 +201,6 @@ class _MainScreenState extends State<MainScreen> {
                               ),
                             ),
                           );
-                          //}
-                          //mainStore.loadNextPage();
-                          /*return Container(
-                            height: 10,
-                            child: LinearProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation(Colors.blue),
-                            ),
-                          );*/
                         },
                       );
                     }
