@@ -80,13 +80,6 @@ abstract class _MainStore with Store {
       newTargets[i].progress =
           ((newTargets[i].valorAtual! * 100) / newTargets[i].valorFinal!);
     }
-    /*newTargets.forEach((element) async {
-      print('add on list: ${element.descricao}');
-      element.valorAtual =
-          await DebitRepository().getSomeDebitFromTarget(element);
-
-      element.progress = ((element.valorAtual! * 100) / element.valorFinal!);
-    });*/
 
     print('size now list target: ${targetList.length}');
 
@@ -111,4 +104,26 @@ abstract class _MainStore with Store {
 
   @computed
   bool get showProgress => loading && targetList.isEmpty;
+
+  @action
+  Future<void> removeTarget(int indice) async {
+    print('apertou no delete');
+    try {
+      loading = true;
+
+      var _target = targetList[indice];
+
+      print('deletando o target $_target');
+
+      TargetRepository().deleteTarget(_target);
+
+      print('removido o target com sucesso');
+
+      targetList.removeAt(indice);
+
+      loading = false;
+    } catch (e) {
+      print(e);
+    }
+  }
 }

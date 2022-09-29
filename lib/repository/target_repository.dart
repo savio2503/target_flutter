@@ -1,4 +1,5 @@
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
+import 'package:target_flutter/repository/debit_repository.dart';
 import 'package:target_flutter/repository/table_keys.dart';
 
 import '../model/target.dart';
@@ -61,6 +62,26 @@ class TargetRepository {
       }
     } catch (e) {
       return Future.error('Falha ao salvar anúncio');
+    }
+  }
+
+  Future<void> deleteTarget(Target target) async {
+    try {
+      print('-> deleteTarget');
+      final targetParse = ParseObject(keyTargetTable)..objectId = target.id!;
+
+      await DebitRepository().deleteDebiFromTarget(target);
+
+      final response = targetParse.delete();
+
+      print('<- deleteTarget');
+      /*if (response.) {
+      } else {
+        return Future.error(ParseErrors.getDescription(response.error!.code));
+      } */
+    } catch (e) {
+      print('<- erro deleteTarget');
+      return Future.error('error ao deletar os debitos');
     }
   }
 }

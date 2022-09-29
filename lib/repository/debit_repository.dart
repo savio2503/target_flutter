@@ -54,7 +54,7 @@ class DebitRepository {
       print('0');
 
       if (debit.id != null) debitObject.objectId = debit.id!;
-      
+
       print('1');
 
       final parseAcl = ParseACL(owner: parseUser);
@@ -105,6 +105,26 @@ class DebitRepository {
       }
     } catch (e) {
       return Future.error('error ao buscar os debitos');
+    }
+  }
+
+  Future<void> deleteDebiFromTarget(Target target) async {
+    try {
+      List<Debit> debitos = await getAllDebit(target);
+
+      for (var debit in debitos) {
+        var debitParse = ParseObject(keyDebitTable)..objectId = debit.id!;
+        debitParse.delete();
+      }
+      
+      print('<- deleteDebiFromTarget');
+      /*if (response.) {
+      } else {
+        return Future.error(ParseErrors.getDescription(response.error!.code));
+      } */
+    } catch (e) {
+      print('<- erro deleteDebiFromTarget');
+      return Future.error('error ao deletar os debitos');
     }
   }
 }

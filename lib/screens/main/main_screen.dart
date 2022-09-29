@@ -40,7 +40,7 @@ class _MainScreenState extends State<MainScreen> {
           title: const Text('Objetivos'),
           centerTitle: true,
           leading: IconButton(
-            icon: Icon(Icons.outbond),
+            icon: Icon(Icons.logout),
             onPressed: () {
               userManagerStore.logout();
               Navigator.pop(context);
@@ -116,87 +116,119 @@ class _MainScreenState extends State<MainScreen> {
                           //print('index: $index + total: ${mainStore.targetList.length} + target: ${mainStore.targetList[index]}');
                           //print('index: $index');
                           //if (index < mainStore.targetList.length) {
-                          return InkWell(
-                            onTap: () async {
-                              final result = await Navigator.of(context).push(
-                                MaterialPageRoute(
-                                    builder: (_) => EditTarget(index)),
+                          final _target = mainStore.targetList[index];
+                          return Dismissible(
+                            key: Key(_target.id!),
+                            onDismissed: (direction) async {
+                              await mainStore.removeTarget(index);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                      'O Objetivo ${_target.descricao} foi removido'),
+                                ),
                               );
-
-                              mainStore.reload();
                             },
-                            child: Card(
+                            background: Container(
+                              color: Colors.red,
                               child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 30, vertical: 10),
+                                padding: const EdgeInsets.only(right: 30),
                                 child: Column(
-                                  children: [
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: const [
                                     Text(
-                                      mainStore.targetList[index].descricao!,
-                                      style: styleTitle,
-                                    ),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          'Valor Atual: ',
-                                          style: styleNormal,
-                                        ),
-                                        Text(
-                                          mainStore.targetList[index]
-                                                      .valorAtual !=
-                                                  null
-                                              ? mainStore
-                                                  .targetList[index].valorAtual!
-                                                  .formattedMoney()
-                                              : 'R\$ 0,00',
-                                          style: styleNormal,
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          'Valor Final: ',
-                                          style: styleNormal,
-                                        ),
-                                        Text(
-                                          mainStore
-                                              .targetList[index].valorFinal!
-                                              .formattedMoney(),
-                                          style: styleNormal,
-                                        ),
-                                      ],
-                                    ),
-                                    Text(
-                                      mainStore.targetList[index].progress !=
-                                              null
-                                          ? mainStore
-                                              .targetList[index].progress!
-                                              .formattedPercentage()
-                                          : '0.0 %',
-                                      style: styleNormal,
-                                    ),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    LinearProgressIndicator(
-                                      value: ((mainStore
-                                                  .targetList[index].progress ??
-                                              0) /
-                                          100),
-                                      color: Colors.blue,
+                                      'Remover?',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 25,
+                                      ),
                                     ),
                                   ],
+                                ),
+                              ),
+                            ),
+                            child: InkWell(
+                              onTap: () async {
+                                final result = await Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                      builder: (_) => EditTarget(index)),
+                                );
+
+                                mainStore.reload();
+                              },
+                              child: Card(
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 30, vertical: 10),
+                                  child: Column(
+                                    children: [
+                                      Text(
+                                        mainStore.targetList[index].descricao!,
+                                        style: styleTitle,
+                                      ),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            'Valor Atual: ',
+                                            style: styleNormal,
+                                          ),
+                                          Text(
+                                            mainStore.targetList[index]
+                                                        .valorAtual !=
+                                                    null
+                                                ? mainStore.targetList[index]
+                                                    .valorAtual!
+                                                    .formattedMoney()
+                                                : 'R\$ 0,00',
+                                            style: styleNormal,
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            'Valor Final: ',
+                                            style: styleNormal,
+                                          ),
+                                          Text(
+                                            mainStore
+                                                .targetList[index].valorFinal!
+                                                .formattedMoney(),
+                                            style: styleNormal,
+                                          ),
+                                        ],
+                                      ),
+                                      Text(
+                                        mainStore.targetList[index].progress !=
+                                                null
+                                            ? mainStore
+                                                .targetList[index].progress!
+                                                .formattedPercentage()
+                                            : '0.0 %',
+                                        style: styleNormal,
+                                      ),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      LinearProgressIndicator(
+                                        value: ((mainStore.targetList[index]
+                                                    .progress ??
+                                                0) /
+                                            100),
+                                        color: Colors.blue,
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),

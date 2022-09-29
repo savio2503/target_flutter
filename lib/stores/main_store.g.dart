@@ -93,6 +93,14 @@ mixin _$MainStore on _MainStore, Store {
         .run(() => super.addNewTargets(newTargets));
   }
 
+  late final _$removeTargetAsyncAction =
+      AsyncAction('_MainStore.removeTarget', context: context);
+
+  @override
+  Future<void> removeTarget(int indice) {
+    return _$removeTargetAsyncAction.run(() => super.removeTarget(indice));
+  }
+
   late final _$_MainStoreActionController =
       ActionController(name: '_MainStore', context: context);
 

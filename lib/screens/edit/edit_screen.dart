@@ -35,7 +35,7 @@ class EditTarget extends StatelessWidget {
         title: const Text("Editar objetivo"),
         centerTitle: true,
         leading:  IconButton(
-            icon: const Icon(Icons.backspace),
+            icon: const Icon(Icons.arrow_back),
             onPressed: () {
               Navigator.pop(context, edit);
             },
