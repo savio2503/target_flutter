@@ -93,6 +93,21 @@ mixin _$EditStore on _EditStore, Store {
     });
   }
 
+  late final _$editAtom = Atom(name: '_EditStore.edit', context: context);
+
+  @override
+  bool get edit {
+    _$editAtom.reportRead();
+    return super.edit;
+  }
+
+  @override
+  set edit(bool value) {
+    _$editAtom.reportWrite(value, super.edit, () {
+      super.edit = value;
+    });
+  }
+
   late final _$setTargetAsyncAction =
       AsyncAction('_EditStore.setTarget', context: context);
 
@@ -107,6 +122,14 @@ mixin _$EditStore on _EditStore, Store {
   @override
   Future<void> reloadDebit(Target target) {
     return _$reloadDebitAsyncAction.run(() => super.reloadDebit(target));
+  }
+
+  late final _$removeDebitAsyncAction =
+      AsyncAction('_EditStore.removeDebit', context: context);
+
+  @override
+  Future<void> removeDebit(int indice) {
+    return _$removeDebitAsyncAction.run(() => super.removeDebit(indice));
   }
 
   late final _$_EditStoreActionController =
@@ -163,6 +186,7 @@ descricao: ${descricao},
 valorFinal: ${valorFinal},
 loading: ${loading},
 valorADepositar: ${valorADepositar},
+edit: ${edit},
 descricaoValid: ${descricaoValid},
 finalValid: ${finalValid},
 valorDepositarValid: ${valorDepositarValid}

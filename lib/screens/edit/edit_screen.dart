@@ -34,12 +34,16 @@ class EditTarget extends StatelessWidget {
       appBar: AppBar(
         title: const Text("Editar objetivo"),
         centerTitle: true,
-        leading:  IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () {
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            edit = editStore.edit;
+            if (edit)
               Navigator.pop(context, edit);
-            },
-          ),
+            else
+              Navigator.pop(context);
+          },
+        ),
       ),
       body: SizedBox(
         child: SingleChildScrollView(
@@ -138,32 +142,61 @@ class EditTarget extends StatelessWidget {
                           controller: scrollController,
                           itemCount: editStore.debitList.length,
                           itemBuilder: (_, index) {
-                            return Padding(
-                              padding: const EdgeInsets.all(15),
-                              child: Column(
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
+                            return Dismissible(
+                              key: Key(editStore.debitList[index].id!),
+                              onDismissed: (direction) async {
+                                await editStore.removeDebit(index);
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(const SnackBar(
+                                  content: Text('O debito foi removido'),
+                                ));
+                              },
+                              background: Container(
+                                color: Colors.red,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(right: 30),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: const [
                                       Text(
-                                        editStore.debitList[index].create!
-                                            .formattedDate(),
-                                        style: const TextStyle(
-                                          fontSize: 15,
-                                        ),
-                                      ),
-                                      Text(
-                                        editStore.debitList[index].valor!
-                                            .formattedMoney(),
-                                        style: const TextStyle(
+                                        'Remover?',
+                                        style: TextStyle(
+                                          color: Colors.white,
                                           fontSize: 15,
                                         ),
                                       ),
                                     ],
                                   ),
-                                  Divider(),
-                                ],
+                                ),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(15),
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          editStore.debitList[index].create!
+                                              .formattedDate(),
+                                          style: const TextStyle(
+                                            fontSize: 15,
+                                          ),
+                                        ),
+                                        Text(
+                                          editStore.debitList[index].valor!
+                                              .formattedMoney(),
+                                          style: const TextStyle(
+                                            fontSize: 15,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Divider(),
+                                  ],
+                                ),
                               ),
                             );
                           },
@@ -258,6 +291,7 @@ class DialogDebit extends StatelessWidget {
                         .saveDebit(editStore.valorADepositar!, target);
                     editStore.setValorDepositar(null);
                     await editStore.reloadDebit(target);
+                    editStore.edit = true;
                     Navigator.pop(context);
                   },
                   child: const Text(

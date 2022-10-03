@@ -108,8 +108,9 @@ class DebitRepository {
     }
   }
 
-  Future<void> deleteDebiFromTarget(Target target) async {
+  Future<void> deleteDebitFromTarget(Target target) async {
     try {
+      print('-> deleteDebiFromTarget');
       List<Debit> debitos = await getAllDebit(target);
 
       for (var debit in debitos) {
@@ -125,6 +126,18 @@ class DebitRepository {
     } catch (e) {
       print('<- erro deleteDebiFromTarget');
       return Future.error('error ao deletar os debitos');
+    }
+  }
+
+  Future<void> deleteDebit(Debit debit) async {
+    try {
+      print('-> deleteDebit');
+      var debitParse = ParseObject(keyDebitTable)..objectId = debit.id!;
+      debitParse.delete();
+      print('<- deleteDebit');
+    } catch (e) {
+      print('<- erro deleteDebit');
+      return Future.error('error ao deletar o debito');
     }
   }
 }

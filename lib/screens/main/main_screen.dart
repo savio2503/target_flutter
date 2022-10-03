@@ -154,7 +154,8 @@ class _MainScreenState extends State<MainScreen> {
                                       builder: (_) => EditTarget(index)),
                                 );
 
-                                mainStore.reload();
+                                if (result)
+                                  mainStore.reload();
                               },
                               child: Card(
                                 child: Padding(

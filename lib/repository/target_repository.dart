@@ -70,7 +70,7 @@ class TargetRepository {
       print('-> deleteTarget');
       final targetParse = ParseObject(keyTargetTable)..objectId = target.id!;
 
-      await DebitRepository().deleteDebiFromTarget(target);
+      await DebitRepository().deleteDebitFromTarget(target);
 
       final response = targetParse.delete();
 

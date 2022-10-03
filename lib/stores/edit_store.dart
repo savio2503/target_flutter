@@ -1,6 +1,7 @@
 import 'package:mobx/mobx.dart';
 import 'package:target_flutter/model/debit.dart';
 import 'package:target_flutter/model/target.dart';
+import 'package:target_flutter/repository/debit_repository.dart';
 import 'package:target_flutter/stores/debit_store.dart';
 
 part 'edit_store.g.dart';
@@ -22,6 +23,9 @@ abstract class _EditStore with Store {
   @observable
   num? valorADepositar;
 
+  @observable
+  bool edit = false;
+
   ObservableList<Debit> debitList = ObservableList<Debit>();
 
   @action
@@ -30,6 +34,7 @@ abstract class _EditStore with Store {
     print('setTarget: ${target.valorFinal}');
     valorFinal = target.valorFinal;
     idTarget = target.id!;
+    edit = false;
 
     reloadDebit(target);
   }
@@ -44,7 +49,10 @@ abstract class _EditStore with Store {
   }
 
   @action
-  void setDescricao(String? value) => descricao = value;
+  void setDescricao(String? value) {
+    edit = true;
+    descricao = value;
+  }
 
   @computed
   bool get descricaoValid => descricao != null && descricao!.isNotEmpty;
@@ -57,7 +65,10 @@ abstract class _EditStore with Store {
   }
 
   @action
-  void setFinal(num? value) => valorFinal = value;
+  void setFinal(num? value) {
+    edit = true;
+    valorFinal = value;
+  }
 
   @computed
   bool get finalValid => valorFinal != null && valorFinal! > 0;
@@ -70,7 +81,10 @@ abstract class _EditStore with Store {
   }
 
   @action
-  void setDebit(Debit debit) => debitList.add(debit);
+  void setDebit(Debit debit) {
+    edit = true;
+    debitList.add(debit);
+  }
 
   @action
   void setValorDepositar(num? value) {
@@ -86,6 +100,29 @@ abstract class _EditStore with Store {
       return null;
     } else {
       return 'O Valor a depositar tem que ser maior que zero';
+    }
+  }
+
+  @action
+  Future<void> removeDebit(int indice) async {
+    print('apertou para deletar o debito');
+    try {
+      loading = true;
+
+      var _debit = debitList[indice];
+
+      print('deletando o debito $_debit');
+
+      DebitRepository().deleteDebit(_debit);
+
+      print('deletou com sucesso!');
+
+      debitList.removeAt(indice);
+      edit = true;
+
+      loading = false;
+    } catch (e) {
+      print(e);
     }
   }
 }
