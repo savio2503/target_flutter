@@ -2,6 +2,7 @@ import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 import 'package:target_flutter/repository/debit_repository.dart';
 import 'package:target_flutter/repository/table_keys.dart';
 
+import '../model/debit.dart';
 import '../model/target.dart';
 import '../model/user.dart';
 import 'parse_errors.dart';
@@ -50,6 +51,7 @@ class TargetRepository {
 
       targetObject.set<String>(keyTargetDescricao, target.descricao!);
       targetObject.set<num>(keyTargetFinal, target.valorFinal!);
+      targetObject.set<num>(keyTargetTypeValue, target.tipoValor == TypeDebit.REAL ? 1 : 2);
 
       targetObject.set<String>(keyTargetUser, target.user!.id!);
 

@@ -22,9 +22,9 @@ abstract class _DebitStore with Store {
     return result;
   }
 
-  Future<Debit?> saveDebit(num valor, Target target) async {
+  Future<Debit?> saveDebit(Target target, num valor, TypeDebit tipo) async {
     try {
-      Debit debit = Debit(valor: valor, target: target, user: GetIt.I<UserManagerStore>().user);
+      Debit debit = Debit(valor: valor, target: target, user: GetIt.I<UserManagerStore>().user, tipo: tipo);
 
       Debit result = await DebitRepository().save(debit);
 

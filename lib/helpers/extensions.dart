@@ -1,4 +1,5 @@
 import 'package:intl/intl.dart';
+import 'package:target_flutter/model/debit.dart';
 
 extension StringExtension on String {
   bool isEmailValid() {
@@ -9,6 +10,11 @@ extension StringExtension on String {
 }
 
 extension NumberExtension on num {
+  String formattedMoneyWithType(TypeDebit tipo) {
+    String prefix = tipo == TypeDebit.REAL ? 'R\$' : 'U\$';
+    return NumberFormat('$prefix ###,##0.00', 'pt-BR').format(this);
+  }
+
   String formattedMoney() {
     return NumberFormat('R\$ ###,##0.00', 'pt-BR').format(this);
   }
@@ -27,5 +33,3 @@ extension DateTimeExtension on DateTime {
     return DateFormat('dd/MM/yyyy').format(this);
   }
 }
-
-

@@ -154,8 +154,7 @@ class _MainScreenState extends State<MainScreen> {
                                       builder: (_) => EditTarget(index)),
                                 );
 
-                                if (result)
-                                  mainStore.reload();
+                                if (result) mainStore.reload();
                               },
                               child: Card(
                                 child: Padding(
@@ -184,7 +183,10 @@ class _MainScreenState extends State<MainScreen> {
                                                     null
                                                 ? mainStore.targetList[index]
                                                     .valorAtual!
-                                                    .formattedMoney()
+                                                    .formattedMoneyWithType(
+                                                        mainStore
+                                                            .targetList[index]
+                                                            .tipoValor)
                                                 : 'R\$ 0,00',
                                             style: styleNormal,
                                           ),
@@ -204,7 +206,9 @@ class _MainScreenState extends State<MainScreen> {
                                           Text(
                                             mainStore
                                                 .targetList[index].valorFinal!
-                                                .formattedMoney(),
+                                                .formattedMoneyWithType(
+                                                    mainStore.targetList[index]
+                                                        .tipoValor),
                                             style: styleNormal,
                                           ),
                                         ],

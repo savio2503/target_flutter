@@ -13,13 +13,21 @@ class Debit {
   DateTime? create;
   User? user;
   Target? target;
+  TypeDebit tipo = TypeDebit.REAL;
 
-  Debit({this.id, this.valor, this.create, this.user, this.target});
+  Debit({this.id, this.valor, this.create, this.user, this.target, required this.tipo});
 
   Debit.fromParse(ParseObject object) {
     id = object.objectId;
     valor = object.get<num>(keyDebitValor);
     create = object.get<DateTime>(keyDebitData);
+    var auxTipo = object.get<num>(keyDebitType);
+
+    if (auxTipo == null || auxTipo == 1) {
+      tipo = TypeDebit.REAL;
+    } else if (auxTipo == 2) {
+      tipo = TypeDebit.DOLLAR;
+    }
     //user =
     //    UserRepository().mapParseToUser(object.get<ParseUser>(keyDebitUser)!);
     target = Target.fromParse(object.get<ParseObject>(keyDebitTarget)!);
@@ -27,6 +35,6 @@ class Debit {
 
   @override
   String toString() {
-    return "Debit = {id = $id, valor: $valor, create: $create, user: $user, target: $target}";
+    return "Debit = {id = $id, valor: $valor, create: $create, user: $user, target: $target, tipo: $tipo}";
   }
 }

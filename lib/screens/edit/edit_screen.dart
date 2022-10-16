@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:get_it/get_it.dart';
+import 'package:target_flutter/components/select_items.dart';
 import 'package:target_flutter/helpers/extensions.dart';
 import 'package:target_flutter/model/debit.dart';
 import 'package:target_flutter/stores/debit_store.dart';
@@ -99,9 +100,11 @@ class EditTarget extends StatelessWidget {
                       style: const TextStyle(
                         fontSize: 15,
                       ),
-                      decoration: const InputDecoration(
-                        prefixText: 'R\$ ',
-                        border: OutlineInputBorder(),
+                      decoration: InputDecoration(
+                        prefixText: target.tipoValor == TypeDebit.REAL
+                            ? 'R\$ '
+                            : 'U\$ ',
+                        border: const OutlineInputBorder(),
                         isDense: true,
                       ),
                       inputFormatters: [
@@ -187,7 +190,8 @@ class EditTarget extends StatelessWidget {
                                         ),
                                         Text(
                                           editStore.debitList[index].valor!
-                                              .formattedMoney(),
+                                              .formattedMoneyWithType(editStore
+                                                  .debitList[index].tipo),
                                           style: const TextStyle(
                                             fontSize: 15,
                                           ),
@@ -257,10 +261,13 @@ class DialogDebit extends StatelessWidget {
                     fontSize: 15,
                   ),
                   decoration: InputDecoration(
-                      prefixText: 'R\$ ',
-                      border: OutlineInputBorder(),
+                      prefixText: editStore.tipoDeposito == TypeDebit.REAL
+                          ? 'R\$ '
+                          : 'U\$ ',
+                      border: const OutlineInputBorder(),
                       isDense: true,
-                      errorText: editStore.valorDepositarError),
+                      errorText: editStore.valorDepositarError,
+                      suffixIcon: SelectItems(editStore.setTipoDeposito)),
                   inputFormatters: [
                     FilteringTextInputFormatter.digitsOnly,
                     CentavosInputFormatter(),
@@ -287,9 +294,10 @@ class DialogDebit extends StatelessWidget {
               if (editStore.valorDepositarValid) {
                 return TextButton(
                   onPressed: () async {
-                    await DebitStore()
-                        .saveDebit(editStore.valorADepositar!, target);
+                    await DebitStore().saveDebit(target,
+                        editStore.valorADepositar!, editStore.tipoDeposito);
                     editStore.setValorDepositar(null);
+                    editStore.setTipoDeposito(TypeDebit.REAL);
                     await editStore.reloadDebit(target);
                     editStore.edit = true;
                     Navigator.pop(context);

@@ -5,9 +5,8 @@ import 'package:target_flutter/model/debit.dart';
 import 'package:target_flutter/stores/add_store.dart';
 
 class SelectItems extends StatefulWidget {
-  const SelectItems(this.addStore, this.setChange);
+  const SelectItems(this.setChange);
 
-  final AddStore addStore;
   final void Function(TypeDebit) setChange;
 
   @override

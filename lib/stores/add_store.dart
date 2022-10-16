@@ -95,6 +95,7 @@ abstract class _AddStore with Store {
       descricao: descricao,
       valorFinal: valorFinal,
       user: GetIt.I<UserManagerStore>().user,
+      tipoValor: tipoFinal,
     );
 
     loading = true;
@@ -108,7 +109,7 @@ abstract class _AddStore with Store {
       print('targetResult: $targetResult');
 
       if (valorInicial > 0.0) {
-        await DebitStore().saveDebit(valorInicial, targetResult);
+        await DebitStore().saveDebit(targetResult, valorInicial, tipoInicial);
       }
       saveTarget = true;
       await GetIt.I<MainStore>().reload();

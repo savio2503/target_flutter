@@ -28,6 +28,12 @@ abstract class _EditStore with Store {
 
   ObservableList<Debit> debitList = ObservableList<Debit>();
 
+  @observable
+  TypeDebit tipoDeposito = TypeDebit.REAL;
+
+  @action
+  void setTipoDeposito(TypeDebit value) => tipoDeposito = value;
+
   @action
   Future<void> setTarget(Target target) async {
     descricao = target.descricao!;

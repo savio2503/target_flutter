@@ -108,6 +108,22 @@ mixin _$EditStore on _EditStore, Store {
     });
   }
 
+  late final _$tipoDepositoAtom =
+      Atom(name: '_EditStore.tipoDeposito', context: context);
+
+  @override
+  TypeDebit get tipoDeposito {
+    _$tipoDepositoAtom.reportRead();
+    return super.tipoDeposito;
+  }
+
+  @override
+  set tipoDeposito(TypeDebit value) {
+    _$tipoDepositoAtom.reportWrite(value, super.tipoDeposito, () {
+      super.tipoDeposito = value;
+    });
+  }
+
   late final _$setTargetAsyncAction =
       AsyncAction('_EditStore.setTarget', context: context);
 
@@ -134,6 +150,17 @@ mixin _$EditStore on _EditStore, Store {
 
   late final _$_EditStoreActionController =
       ActionController(name: '_EditStore', context: context);
+
+  @override
+  void setTipoDeposito(TypeDebit value) {
+    final _$actionInfo = _$_EditStoreActionController.startAction(
+        name: '_EditStore.setTipoDeposito');
+    try {
+      return super.setTipoDeposito(value);
+    } finally {
+      _$_EditStoreActionController.endAction(_$actionInfo);
+    }
+  }
 
   @override
   void setDescricao(String? value) {
@@ -187,6 +214,7 @@ valorFinal: ${valorFinal},
 loading: ${loading},
 valorADepositar: ${valorADepositar},
 edit: ${edit},
+tipoDeposito: ${tipoDeposito},
 descricaoValid: ${descricaoValid},
 finalValid: ${finalValid},
 valorDepositarValid: ${valorDepositarValid}

@@ -65,6 +65,7 @@ class DebitRepository {
       print('2');
 
       debitObject.set<num>(keyDebitValor, debit.valor!);
+      debitObject.set<num>(keyDebitType, debit.tipo == TypeDebit.REAL ? 1 : 2);
       debitObject.set<ParseObject>(keyDebitTarget,
           ParseObject(keyTargetTable)..set(keyTargetId, debit.target!.id!));
 
@@ -117,12 +118,8 @@ class DebitRepository {
         var debitParse = ParseObject(keyDebitTable)..objectId = debit.id!;
         debitParse.delete();
       }
-      
+
       print('<- deleteDebiFromTarget');
-      /*if (response.) {
-      } else {
-        return Future.error(ParseErrors.getDescription(response.error!.code));
-      } */
     } catch (e) {
       print('<- erro deleteDebiFromTarget');
       return Future.error('error ao deletar os debitos');

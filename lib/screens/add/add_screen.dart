@@ -99,7 +99,7 @@ class _AddTargetState extends State<AddTarget> {
                                   : 'U\$ ',
                               border: const OutlineInputBorder(),
                               isDense: true,
-                              suffixIcon: SelectItems(addStore, addStore.setTipoInicial),
+                              suffixIcon: SelectItems(addStore.setTipoInicial),
                             ),
                             inputFormatters: [
                               FilteringTextInputFormatter.digitsOnly,
@@ -129,7 +129,7 @@ class _AddTargetState extends State<AddTarget> {
                                   : 'U\$ ',
                               border: const OutlineInputBorder(),
                               isDense: true,
-                              suffixIcon: SelectItems(addStore, addStore.setTipoFinal),
+                              suffixIcon: SelectItems(addStore.setTipoFinal),
                             ),
                             inputFormatters: [
                               FilteringTextInputFormatter.digitsOnly,
