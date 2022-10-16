@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobx/mobx.dart';
+import 'package:target_flutter/model/debit.dart';
 import 'package:target_flutter/repository/target_repository.dart';
 import 'package:target_flutter/stores/debit_store.dart';
 import 'package:target_flutter/stores/user_manager_store.dart';
@@ -20,7 +21,19 @@ abstract class _AddStore with Store {
   double valorInicial = 0.0;
 
   @observable
+  TypeDebit tipoInicial = TypeDebit.REAL;
+
+  @action
+  void setTipoInicial(TypeDebit value) => tipoInicial = value;
+
+  @observable
   double valorFinal = 0.0;
+
+  @observable
+  TypeDebit tipoFinal = TypeDebit.REAL;
+
+  @action
+  void setTipoFinal(TypeDebit value) => tipoFinal = value;
 
   @observable
   String? error;

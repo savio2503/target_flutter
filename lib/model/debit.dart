@@ -5,6 +5,8 @@ import 'package:target_flutter/repository/table_keys.dart';
 
 import '../repository/user_repository.dart';
 
+enum TypeDebit { REAL, DOLLAR }
+
 class Debit {
   String? id;
   num? valor;

@@ -76,6 +76,22 @@ mixin _$AddStore on _AddStore, Store {
     });
   }
 
+  late final _$tipoInicialAtom =
+      Atom(name: '_AddStore.tipoInicial', context: context);
+
+  @override
+  TypeDebit get tipoInicial {
+    _$tipoInicialAtom.reportRead();
+    return super.tipoInicial;
+  }
+
+  @override
+  set tipoInicial(TypeDebit value) {
+    _$tipoInicialAtom.reportWrite(value, super.tipoInicial, () {
+      super.tipoInicial = value;
+    });
+  }
+
   late final _$valorFinalAtom =
       Atom(name: '_AddStore.valorFinal', context: context);
 
@@ -89,6 +105,22 @@ mixin _$AddStore on _AddStore, Store {
   set valorFinal(double value) {
     _$valorFinalAtom.reportWrite(value, super.valorFinal, () {
       super.valorFinal = value;
+    });
+  }
+
+  late final _$tipoFinalAtom =
+      Atom(name: '_AddStore.tipoFinal', context: context);
+
+  @override
+  TypeDebit get tipoFinal {
+    _$tipoFinalAtom.reportRead();
+    return super.tipoFinal;
+  }
+
+  @override
+  set tipoFinal(TypeDebit value) {
+    _$tipoFinalAtom.reportWrite(value, super.tipoFinal, () {
+      super.tipoFinal = value;
     });
   }
 
@@ -166,6 +198,28 @@ mixin _$AddStore on _AddStore, Store {
       ActionController(name: '_AddStore', context: context);
 
   @override
+  void setTipoInicial(TypeDebit value) {
+    final _$actionInfo = _$_AddStoreActionController.startAction(
+        name: '_AddStore.setTipoInicial');
+    try {
+      return super.setTipoInicial(value);
+    } finally {
+      _$_AddStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setTipoFinal(TypeDebit value) {
+    final _$actionInfo =
+        _$_AddStoreActionController.startAction(name: '_AddStore.setTipoFinal');
+    try {
+      return super.setTipoFinal(value);
+    } finally {
+      _$_AddStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void setDescricao(String value) {
     final _$actionInfo =
         _$_AddStoreActionController.startAction(name: '_AddStore.setDescricao');
@@ -214,7 +268,9 @@ mixin _$AddStore on _AddStore, Store {
     return '''
 descricao: ${descricao},
 valorInicial: ${valorInicial},
+tipoInicial: ${tipoInicial},
 valorFinal: ${valorFinal},
+tipoFinal: ${tipoFinal},
 error: ${error},
 loading: ${loading},
 saveTarget: ${saveTarget},

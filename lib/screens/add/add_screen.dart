@@ -1,11 +1,22 @@
 import 'package:brasil_fields/brasil_fields.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:target_flutter/components/error_box.dart';
+import 'package:target_flutter/model/debit.dart';
 import 'package:target_flutter/stores/add_store.dart';
 
-class AddTarget extends StatelessWidget {
+import '../../components/select_items.dart';
+
+class AddTarget extends StatefulWidget {
+  const AddTarget({super.key});
+
+  @override
+  State<AddTarget> createState() => _AddTargetState();
+}
+
+class _AddTargetState extends State<AddTarget> {
   final AddStore addStore = AddStore();
 
   @override
@@ -82,10 +93,13 @@ class AddTarget extends StatelessWidget {
                         Observer(builder: (_) {
                           return TextField(
                             enabled: !addStore.loading,
-                            decoration: const InputDecoration(
-                              prefixText: 'R\$ ',
-                              border: OutlineInputBorder(),
+                            decoration: InputDecoration(
+                              prefixText: addStore.tipoInicial == TypeDebit.REAL
+                                  ? 'R\$ '
+                                  : 'U\$ ',
+                              border: const OutlineInputBorder(),
                               isDense: true,
+                              suffixIcon: SelectItems(addStore, addStore.setTipoInicial),
                             ),
                             inputFormatters: [
                               FilteringTextInputFormatter.digitsOnly,
@@ -109,10 +123,13 @@ class AddTarget extends StatelessWidget {
                         Observer(builder: (_) {
                           return TextField(
                             enabled: !addStore.loading,
-                            decoration: const InputDecoration(
-                              prefixText: 'R\$ ',
-                              border: OutlineInputBorder(),
+                            decoration: InputDecoration(
+                              prefixText: addStore.tipoFinal == TypeDebit.REAL
+                                  ? 'R\$ '
+                                  : 'U\$ ',
+                              border: const OutlineInputBorder(),
                               isDense: true,
+                              suffixIcon: SelectItems(addStore, addStore.setTipoFinal),
                             ),
                             inputFormatters: [
                               FilteringTextInputFormatter.digitsOnly,
@@ -196,3 +213,4 @@ class FieldTitle extends StatelessWidget {
     );
   }
 }
+
