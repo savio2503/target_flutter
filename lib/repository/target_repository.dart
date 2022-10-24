@@ -51,7 +51,8 @@ class TargetRepository {
 
       targetObject.set<String>(keyTargetDescricao, target.descricao!);
       targetObject.set<num>(keyTargetFinal, target.valorFinal!);
-      targetObject.set<num>(keyTargetTypeValue, target.tipoValor == TypeDebit.REAL ? 1 : 2);
+      targetObject.set<num>(
+          keyTargetTypeValue, target.tipoValor == TypeDebit.REAL ? 1 : 2);
 
       targetObject.set<String>(keyTargetUser, target.user!.id!);
 
@@ -84,6 +85,32 @@ class TargetRepository {
     } catch (e) {
       print('<- erro deleteTarget');
       return Future.error('error ao deletar os debitos');
+    }
+  }
+
+  Future<void> updateTarget(
+    Target target,
+    String? descricao,
+    num? valor,
+    TypeDebit? type,
+  ) async {
+    try {
+      print("target a ser atualizado: $target");
+      num auxTipo = type != null
+          ? (type == TypeDebit.REAL ? 1 : 2)
+          : (target.tipoValor == TypeDebit.REAL ? 1 : 2);
+      print("type: $type, auxTipo: $auxTipo");
+      var targetParse = ParseObject(keyTargetTable)
+        ..objectId = target.id!
+        ..set(keyTargetDescricao, descricao ?? target.descricao!)
+        ..set(keyTargetFinal, valor ?? target.valorFinal)
+        ..set(keyTargetTypeValue, auxTipo);
+
+      await targetParse.save();
+
+      print("Objetivo atualizado com sucesso!");
+    } catch (e) {
+      Future.error("Erro ao tentar fazer o update $e");
     }
   }
 }

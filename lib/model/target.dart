@@ -36,6 +36,6 @@ class Target {
 
   @override
   String toString() {
-    return "Target = {id: $id, descricao: $descricao, valorFinal: $valorFinal, user: $user, create: $createAd}";
+    return "Target = {id: $id, descricao: $descricao, valorFinal: $valorFinal, user: $user, create: $createAd, type: $tipoValor}";
   }
 }

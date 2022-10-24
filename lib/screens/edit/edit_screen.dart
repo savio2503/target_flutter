@@ -8,6 +8,7 @@ import 'package:get_it/get_it.dart';
 import 'package:target_flutter/components/select_items.dart';
 import 'package:target_flutter/helpers/extensions.dart';
 import 'package:target_flutter/model/debit.dart';
+import 'package:target_flutter/repository/target_repository.dart';
 import 'package:target_flutter/stores/debit_store.dart';
 import 'package:target_flutter/stores/edit_store.dart';
 import 'package:target_flutter/stores/main_store.dart';
@@ -24,6 +25,8 @@ class EditTarget extends StatelessWidget {
   late Target target;
   final scrollController = ScrollController();
   bool edit = true;
+  bool editDescricao = false;
+  bool editValor = false;
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +48,27 @@ class EditTarget extends StatelessWidget {
               Navigator.pop(context);
           },
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.save),
+            onPressed: () async {
+              String? aux_des = null;
+              num? aux_valor = null;
+
+              if (editDescricao) aux_des = editStore.descricao;
+
+              if (editValor) aux_valor = editStore.valorFinal;
+
+              print("aux_des $aux_des, aux_val = $aux_valor");
+
+              try {
+                await TargetRepository()
+                    .updateTarget(target, aux_des, aux_valor, editStore.tipoTarget);
+              } catch (e) {}
+              Navigator.pop(context, true);
+            },
+          ),
+        ],
       ),
       body: SizedBox(
         child: SingleChildScrollView(
@@ -78,7 +102,10 @@ class EditTarget extends StatelessWidget {
                         isDense: true,
                         errorText: editStore.descricaoError,
                       ),
-                      onChanged: editStore.setDescricao,
+                      onChanged: (valor) {
+                        editDescricao = true;
+                        editStore.setDescricao(valor);
+                      },
                     ),
                   );
                 }),
@@ -101,11 +128,12 @@ class EditTarget extends StatelessWidget {
                         fontSize: 15,
                       ),
                       decoration: InputDecoration(
-                        prefixText: target.tipoValor == TypeDebit.REAL
+                        prefixText: editStore.tipoTarget == TypeDebit.REAL
                             ? 'R\$ '
                             : 'U\$ ',
                         border: const OutlineInputBorder(),
                         isDense: true,
+                        suffixIcon: SelectItems(editStore.setTipoTarget),
                       ),
                       inputFormatters: [
                         FilteringTextInputFormatter.digitsOnly,
@@ -116,6 +144,7 @@ class EditTarget extends StatelessWidget {
                         double? valorDouble = double.tryParse(
                             valor.replaceAll('.', '').replaceAll(',', '.'));
                         editStore.setFinal(valorDouble ?? 0.0);
+                        editValor = true;
                       },
                     ),
                   );

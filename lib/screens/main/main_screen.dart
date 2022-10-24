@@ -36,6 +36,7 @@ class _MainScreenState extends State<MainScreen> {
     );
     return SafeArea(
       child: Scaffold(
+        backgroundColor: const Color.fromARGB(255, 192, 214, 226),
         appBar: AppBar(
           title: const Text('Objetivos'),
           centerTitle: true,
@@ -67,7 +68,7 @@ class _MainScreenState extends State<MainScreen> {
                     if (mainStore.error != null) {
                       print('mainStore.error != null');
                       return Padding(
-                        padding: const EdgeInsets.all(8),
+                        padding: const EdgeInsets.all(16),
                         child: Container(
                           child: Center(
                             child: Column(
@@ -159,7 +160,7 @@ class _MainScreenState extends State<MainScreen> {
                               child: Card(
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(
-                                      horizontal: 30, vertical: 10),
+                                      horizontal: 20, vertical: 10),
                                   child: Column(
                                     children: [
                                       Text(

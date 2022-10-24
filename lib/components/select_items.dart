@@ -23,42 +23,43 @@ class _SelectItemsState extends State<SelectItems> {
   @override
   Widget build(BuildContext context) {
     return DropdownButtonHideUnderline(
-        child: DropdownButton2(
-          hint: Center(
-            child: Text(
-              'Real',
-              style: TextStyle(
-                fontSize: 14,
-                color: Theme.of(context).hintColor,
-              ),
+      child: DropdownButton2(
+        hint: Center(
+          child: Text(
+            'Real',
+            style: TextStyle(
+              fontSize: 14,
+              color: Theme.of(context).hintColor,
             ),
           ),
-          items: items
-              .map((item) => DropdownMenuItem<String>(
-                    value: item,
-                    child: Text(
-                      item,
-                      style: const TextStyle(
-                        fontSize: 14,
-                      ),
-                    ),
-                  ))
-              .toList(),
-          value: selectedValue,
-          onChanged: (value) {
-            if (value == "Real") {
-              widget.setChange(TypeDebit.REAL);
-            } else {
-              widget.setChange(TypeDebit.DOLLAR);
-            }
-            setState(() {
-              selectedValue = value as String;
-            });
-          },
-          buttonHeight: 40,
-          buttonWidth: 70,
-          itemHeight: 40,
         ),
-      );
+        items: items
+            .map((item) => DropdownMenuItem<String>(
+                  value: item,
+                  child: Text(
+                    item,
+                    style: const TextStyle(
+                      fontSize: 14,
+                    ),
+                  ),
+                ))
+            .toList(),
+        value: selectedValue,
+        onChanged: (value) {
+          if (value == "Real") {
+            widget.setChange(TypeDebit.REAL);
+          } else {
+            widget.setChange(TypeDebit.DOLLAR);
+          }
+          print("Select Item: $value");
+          setState(() {
+            selectedValue = value as String;
+          });
+        },
+        buttonHeight: 40,
+        buttonWidth: 70,
+        itemHeight: 40,
+      ),
+    );
   }
 }

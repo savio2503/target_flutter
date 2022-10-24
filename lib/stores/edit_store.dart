@@ -29,7 +29,13 @@ abstract class _EditStore with Store {
   ObservableList<Debit> debitList = ObservableList<Debit>();
 
   @observable
+  TypeDebit tipoTarget = TypeDebit.DOLLAR;
+
+  @observable
   TypeDebit tipoDeposito = TypeDebit.REAL;
+
+  @action
+  void setTipoTarget(TypeDebit value) => tipoTarget = value;
 
   @action
   void setTipoDeposito(TypeDebit value) => tipoDeposito = value;
@@ -41,6 +47,7 @@ abstract class _EditStore with Store {
     valorFinal = target.valorFinal;
     idTarget = target.id!;
     edit = false;
+    tipoTarget = target.tipoValor;
 
     reloadDebit(target);
   }
