@@ -3,10 +3,11 @@ import 'package:target_flutter/model/debit.dart';
 import 'package:target_flutter/repository/parse_errors.dart';
 import 'package:target_flutter/repository/table_keys.dart';
 
+import '../helpers/dolarRequest.dart';
 import '../model/target.dart';
 
 class DebitRepository {
-  Future<num> getSomeDebitFromTarget(Target target) async {
+  Future<num> getSomeDebitFromTarget(Target target, TypeDebit tipo) async {
     try {
       print('getSomeDebitFromTarget');
       //final currentUser = ParseUser('', '', '')..set(keyUserId, target.user!);
@@ -28,9 +29,22 @@ class DebitRepository {
             response.results!.map((de) => Debit.fromParse(de)).toList();
 
         num some = 0;
+        double priceDolar = DolarRequest.priceDolar;
 
         for (var debit in debits) {
-          some += debit.valor!;
+          //some += debit.valor!;
+
+          if (tipo == TypeDebit.DOLLAR) {
+            if (debit.tipo == TypeDebit.DOLLAR) {
+              some += debit.valor!;
+              print('+${debit.valor!}');
+            } else {
+              some += (debit.valor! * priceDolar);
+              print('+${(debit.valor! * priceDolar)}');
+            }
+          } else {
+            some += debit.valor!;
+          }
         }
 
         return some;

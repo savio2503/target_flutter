@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:get_it/get_it.dart';
 import 'package:mobx/mobx.dart';
+import 'package:target_flutter/helpers/dolarRequest.dart';
+import 'package:target_flutter/model/debit.dart';
 import 'package:target_flutter/model/target.dart';
 import 'package:target_flutter/repository/debit_repository.dart';
 import 'package:target_flutter/stores/user_manager_store.dart';
@@ -20,6 +22,13 @@ abstract class _MainStore with Store {
 
   Future<void> reload() async {
     try {
+      try {
+        DolarRequest.priceDolar = await DolarRequest.requestDolar();
+
+        print('preço do real em relacao ao dolar: ${DolarRequest.priceDolar}');
+      } catch (e) {
+        print('erro get dolar: $e');
+      }
       print('wait delay');
       await Future.delayed(Duration(seconds: 1));
       print('delay finished');
@@ -74,8 +83,12 @@ abstract class _MainStore with Store {
     print('newTargets size: ${newTargets.length}');
     for (int i = 0; i < newTargets.length; i++) {
       print('add on list: ${newTargets[i].descricao}');
-      newTargets[i].valorAtual =
-          await DebitRepository().getSomeDebitFromTarget(newTargets[i]);
+
+      TypeDebit tipo = newTargets[i].tipoValor;
+
+      newTargets[i].valorAtual = await DebitRepository().getSomeDebitFromTarget(
+        newTargets[i], tipo,
+      );
 
       newTargets[i].progress =
           ((newTargets[i].valorAtual! * 100) / newTargets[i].valorFinal!);
