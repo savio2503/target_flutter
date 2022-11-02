@@ -25,7 +25,7 @@ Future<void> initializeParse() async {
     'https://parseapi.back4app.com/',
     clientKey: 'Mz67KJ18u6XkjDbpXYuBcjBhJLVNYSSdcferLYJ2',
     autoSendSessionId: true,
-    debug: false,
+    debug: true,
   );
 }
 

@@ -62,8 +62,8 @@ class EditTarget extends StatelessWidget {
               print("aux_des $aux_des, aux_val = $aux_valor");
 
               try {
-                await TargetRepository()
-                    .updateTarget(target, aux_des, aux_valor, editStore.tipoTarget);
+                await TargetRepository().updateTarget(
+                    target, aux_des, aux_valor, editStore.tipoTarget);
               } catch (e) {}
               Navigator.pop(context, true);
             },
@@ -266,89 +266,183 @@ class DialogDebit extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      child: const Padding(
-        padding: EdgeInsets.all(10),
-        child: Text(
-          'Depositar',
-          style: TextStyle(
-            fontSize: 25,
-          ),
-        ),
-      ),
-      onPressed: () => showDialog<String>(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Depositar'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Observer(builder: (_) {
-                return TextField(
-                  enabled: !editStore.loading,
-                  style: const TextStyle(
-                    fontSize: 15,
-                  ),
-                  decoration: InputDecoration(
-                      prefixText: editStore.tipoDeposito == TypeDebit.REAL
-                          ? 'R\$ '
-                          : 'U\$ ',
-                      border: const OutlineInputBorder(),
-                      isDense: true,
-                      errorText: editStore.valorDepositarError,
-                      suffixIcon: SelectItems(editStore.setTipoDeposito)),
-                  inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
-                    CentavosInputFormatter(),
-                  ],
-                  keyboardType: TextInputType.number,
-                  onChanged: (valor) {
-                    double? valorDouble = double.tryParse(
-                        valor.replaceAll('.', '').replaceAll(',', '.'));
-                    editStore.setValorDepositar(valorDouble ?? 0.0);
-                  },
-                );
-              }),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text(
-                'Voltar',
-                style: TextStyle(color: Colors.red),
-              ),
+    return Row(
+      children: [
+        ElevatedButton(
+          child: Text(
+            'Depositar',
+            style: TextStyle(
+              fontSize: 25,
             ),
-            Observer(builder: (_) {
-              if (editStore.valorDepositarValid) {
-                return TextButton(
-                  onPressed: () async {
-                    await DebitStore().saveDebit(target,
-                        editStore.valorADepositar!, editStore.tipoDeposito);
-                    editStore.setValorDepositar(null);
-                    editStore.setTipoDeposito(TypeDebit.REAL);
-                    await editStore.reloadDebit(target);
-                    editStore.edit = true;
-                    Navigator.pop(context);
-                  },
+          ),
+          style: ElevatedButton.styleFrom(
+            primary: Colors.blue,
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+            textStyle: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+          ),
+          onPressed: () => showDialog<String>(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Depositar'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Observer(builder: (_) {
+                    return TextField(
+                      enabled: !editStore.loading,
+                      style: const TextStyle(
+                        fontSize: 15,
+                      ),
+                      decoration: InputDecoration(
+                          prefixText: editStore.tipoDeposito == TypeDebit.REAL
+                              ? 'R\$ '
+                              : 'U\$ ',
+                          border: const OutlineInputBorder(),
+                          isDense: true,
+                          errorText: editStore.valorDepositarError,
+                          suffixIcon: SelectItems(editStore.setTipoDeposito)),
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                        CentavosInputFormatter(),
+                      ],
+                      keyboardType: TextInputType.number,
+                      onChanged: (valor) {
+                        double? valorDouble = double.tryParse(
+                            valor.replaceAll('.', '').replaceAll(',', '.'));
+                        editStore.setValorDepositar(valorDouble ?? 0.0);
+                      },
+                    );
+                  }),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
                   child: const Text(
-                    'Confirmar',
-                    style: TextStyle(color: Color(0xFF00008B)),
-                  ),
-                );
-              } else {
-                return TextButton(
-                  onPressed: () {},
-                  child: const Text(
-                    'Confirmar',
+                    'Voltar',
                     style: TextStyle(color: Colors.red),
                   ),
-                );
-              }
-            }),
-          ],
+                ),
+                Observer(builder: (_) {
+                  if (editStore.valorDepositarValid) {
+                    return TextButton(
+                      onPressed: () async {
+                        await DebitStore().saveDebit(target,
+                            editStore.valorADepositar!, editStore.tipoDeposito);
+                        editStore.setValorDepositar(null);
+                        editStore.setTipoDeposito(TypeDebit.REAL);
+                        await editStore.reloadDebit(target);
+                        editStore.edit = true;
+                        Navigator.pop(context);
+                      },
+                      child: const Text(
+                        'Confirmar',
+                        style: TextStyle(color: Color(0xFF00008B)),
+                      ),
+                    );
+                  } else {
+                    return TextButton(
+                      onPressed: () {},
+                      child: const Text(
+                        'Confirmar',
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    );
+                  }
+                }),
+              ],
+            ),
+          ),
         ),
-      ),
+        const SizedBox(width: 10),
+        ElevatedButton(
+          child: Text(
+            'Retirar',
+            style: TextStyle(
+              fontSize: 25,
+            ),
+          ),
+          style: ElevatedButton.styleFrom(
+            primary: const Color(0xFFFF6961),
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+            textStyle: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+          ),
+          onPressed: () => showDialog<String>(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Retirar'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Observer(builder: (_) {
+                    return TextField(
+                      enabled: !editStore.loading,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        color: const Color(0xFFFF6961),
+                      ),
+                      decoration: InputDecoration(
+                          prefixText: editStore.tipoDeposito == TypeDebit.REAL
+                              ? 'R\$ '
+                              : 'U\$ ',
+                          border: const OutlineInputBorder(),
+                          isDense: true,
+                          errorText: editStore.valorDepositarError,
+                          suffixIcon: SelectItems(editStore.setTipoDeposito)),
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                        CentavosInputFormatter(),
+                      ],
+                      keyboardType: TextInputType.number,
+                      onChanged: (valor) {
+                        double? valorDouble = double.tryParse(
+                            valor.replaceAll('.', '').replaceAll(',', '.'));
+                        editStore.setValorDepositar(valorDouble ?? 0.0);
+                      },
+                    );
+                  }),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text(
+                    'Voltar',
+                    style: TextStyle(color: Colors.red),
+                  ),
+                ),
+                Observer(builder: (_) {
+                  if (editStore.valorDepositarValid) {
+                    return TextButton(
+                      onPressed: () async {
+                        await DebitStore().saveDebit(target,
+                            (-1 * editStore.valorADepositar!), editStore.tipoDeposito);
+                        editStore.setValorDepositar(null);
+                        editStore.setTipoDeposito(TypeDebit.REAL);
+                        await editStore.reloadDebit(target);
+                        editStore.edit = true;
+                        Navigator.pop(context);
+                      },
+                      child: const Text(
+                        'Retirar',
+                        style: TextStyle(color: Color(0xFF00008B)),
+                      ),
+                    );
+                  } else {
+                    return TextButton(
+                      onPressed: () {},
+                      child: const Text(
+                        'Retirar',
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    );
+                  }
+                }),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
