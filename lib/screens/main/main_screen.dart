@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:get_it/get_it.dart';
 import 'package:target_flutter/helpers/extensions.dart';
+import 'package:target_flutter/screens/distribute/distribute_screen.dart';
 import 'package:target_flutter/screens/edit/edit_screen.dart';
 import 'package:target_flutter/stores/main_store.dart';
 import 'package:target_flutter/stores/user_manager_store.dart';
+import 'package:ionicons/ionicons.dart';
 
 import '../add/add_screen.dart';
 
@@ -48,6 +50,15 @@ class _MainScreenState extends State<MainScreen> {
             },
           ),
           actions: [
+            IconButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => DistributeScreen()),
+                );
+              },
+              icon: const Icon(Icons.stacked_line_chart),
+            ),
             IconButton(
               onPressed: () {
                 Navigator.push(
