@@ -17,8 +17,8 @@ class Api extends GetConnect {
 
   @override
   void onInit() {
-    //httpClient.baseUrl = 'http://100.96.1.2:3333/';
-    httpClient.baseUrl = 'http://192.168.1.9:3333/';
+    httpClient.baseUrl = 'http://100.96.1.2:3333/';
+    //httpClient.baseUrl = 'http://192.168.1.9:3333/';
     //httpClient.baseUrl = 'http://192.168.0.192:3333/';
 
     httpClient.addRequestModifier((Request request) {
@@ -53,21 +53,13 @@ class Api extends GetConnect {
       response = _errorHandler(await get('all'));
     }
 
-    //printd('0 $response}');
-
     List<TargetModel> targets = [];
 
+    printd("retorno getTargets($ativo) = ${response.body}");
+
     for (var target in response.body) {
-      //printd('1 $target}');
 
-      var targetAux = TargetModel.fromJson(target);
-
-      //printd('2 $targetAux}');
-
-      targetAux.porcetagem = double.parse(
-          (targetAux.valorAtual * 100 / targetAux.valor).toStringAsFixed(2));
-
-      targets.add(targetAux);
+      targets.add(TargetModel.fromJson(target));
     }
 
     return targets;
@@ -158,7 +150,7 @@ class Api extends GetConnect {
   Response _errorHandler(Response response) {
     String? errorMessage = response.bodyString;
 
-    printd("-> ${response.bodyString}");
+    //printd("-> ${response.bodyString}");
 
     switch (response.statusCode) {
       case 200:

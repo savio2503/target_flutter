@@ -30,6 +30,7 @@ class TargetModel {
         imagem: json['imagem'],
         coin: json['coin_id'],
         valorAtual: double.parse(json['total_deposit'] ?? "0.00"),
+        porcetagem: json['porcetagem'],
       );
 
   @override

@@ -27,7 +27,7 @@ class ItemController extends GetxController {
 
   void setDescricao(String value) => descricaoController.text = value;
 
-  void setValor(double value) => valorController.text = NumberFormat.simpleCurrency().format(value);
+  void setValor(double value) => valorController.text = NumberFormat.simpleCurrency(name: '', decimalDigits: 2,).format(value);
 
   void setPeso(dynamic value) => peso.value = value.toInt();
 

@@ -27,9 +27,9 @@ class DashboardPage extends GetView<DashboardController> {
             if (created != null && created)
               controller.getAllTarget();
           },
-          icon: const Icon(Icons.add),
+          icon: const Icon(Icons.add, color: Colors.white,),
         ),
-        title: const Text('Objetivos'),
+        title: const Text('Objetivos', style: TextStyle(color: Colors.white,),),
         centerTitle: true,
         backgroundColor: Colors.blue,
         actions: [
@@ -39,7 +39,7 @@ class DashboardPage extends GetView<DashboardController> {
 
               controller.getAllTarget();
             },
-            icon: const Icon(Icons.account_circle),
+            icon: const Icon(Icons.account_circle, color: Colors.white,),
           ),
         ],
       ),
@@ -81,12 +81,7 @@ class DashboardPage extends GetView<DashboardController> {
                   return GestureDetector(
                     onTap: () async {
                       Map<String, dynamic> arg = {
-                        "id": list[index].id,
-                        "descricao": list[index].descricao,
-                        "valor": list[index].valor,
-                        "posicao": list[index].posicao,
-                        "imagem": list[index].imagem,
-                        "coinId": list[index].coin,
+                        "target": list[index]
                       };
                       var edit = await Get.toNamed(
                         Routes.item,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:target/app/data/models/user_login_request.dart';
 import 'package:target/app/data/services/auth/service..dart';
+import 'package:target/app/data/services/coin/service.dart';
 import 'package:target/app/data/services/storage/service.dart';
 import 'package:target/app/tools/functions.dart';
 
@@ -56,6 +57,7 @@ class LoginController extends GetxController {
 
     //printd("out login controller");
     if (_authService.isLogged) {
+      await Get.find<CoinService>().getCoins();
       Get.back();
     }
   }

@@ -26,6 +26,7 @@ class LoginPage extends GetView<LoginController> {
         ),
         centerTitle: true,
         backgroundColor: Colors.blue,
+        iconTheme: IconThemeData(color: Colors.white,),
       ),
       body: Obx(
         () => Column(

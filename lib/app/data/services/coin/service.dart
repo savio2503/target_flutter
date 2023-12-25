@@ -14,11 +14,11 @@ class CoinService extends GetxService {
 
   @override
   void onInit() async {
-    await _getCoins();
+    await getCoins();
     super.onInit();
   }
 
-  Future<void> _getCoins() async {
+  Future<void> getCoins() async {
     _coins = await _repository.getAllCoins();
     printd("coins $_coins");
   }

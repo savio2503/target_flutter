@@ -11,6 +11,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:target/app/data/models/coin.dart';
 import 'package:target/app/data/models/deposit.dart';
+import 'package:target/app/data/models/target.dart';
 import 'package:target/app/data/services/coin/service.dart';
 import 'package:target/app/modules/item/controller.dart';
 import 'package:target/app/tools/functions.dart';
@@ -18,17 +19,20 @@ import 'package:wheel_chooser/wheel_chooser.dart';
 
 class ItemPage extends GetView<ItemController> {
   late List<String> opcoesCoins;
+  late String valorDepositado;
+  late String coinstr;
 
   ItemPage({super.key}) {
     //printd("arg: ${Get.arguments}");
     Map<String, dynamic> args = Get.arguments ?? {};
 
-    controller.setDescricao(
-        args.containsKey('descricao') ? args['descricao'] ?? '' : '');
-    controller.setValor(args.containsKey('valor') ? args['valor'] ?? 0.0 : 0.0);
-    controller.setPeso(args.containsKey('posicao') ? args['posicao'] ?? 1 : 1);
-    controller
-        .setImage(args.containsKey('imagem') ? args['imagem'] ?? " " : " ");
+    TargetModel target = args['target']!;
+
+    controller.setDescricao(target.descricao);
+    controller.setValor(target.valor.toDouble());
+    controller.setPeso(target.posicao);
+    controller.setImage(target.imagem ?? " ");
+
     List<CoinModel> coins = Get.find<CoinService>().coins;
     opcoesCoins = <String>[];
 
@@ -36,10 +40,15 @@ class ItemPage extends GetView<ItemController> {
       opcoesCoins.add(coin.symbol);
     }
 
-    var coinId = args.containsKey('coinId') ? (args['coinId'] - 1) ?? 0 : 0;
+    var coinId = (target.coin - 1).toInt();
+
+    printd("-> setcoin ${opcoesCoins[coinId]}");
 
     controller.setCoin(opcoesCoins[coinId]);
     controller.setCoinId(coinId);
+
+    valorDepositado = NumberFormat.simpleCurrency(name: coins[(target.coin - 1).toInt()].symbol, decimalDigits: 2).format(((target.valor * target.porcetagem) / 100));
+    coinstr    = coins[(target.coin - 1).toInt()].name;
   }
 
   Future<void> processImage(int id) async {
@@ -59,9 +68,10 @@ class ItemPage extends GetView<ItemController> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Editar objetivo'),
+        title: const Text('Editar objetivo', style: TextStyle(color: Colors.white,),),
         centerTitle: true,
         backgroundColor: Colors.blue,
+        iconTheme: IconThemeData(color: Colors.white,),
       ),
       body: SingleChildScrollView(
         child: Obx(
@@ -346,6 +356,11 @@ class ItemPage extends GetView<ItemController> {
     return Column(
       children: [
         SizedBox(height: distancia),
+        const Divider(
+          height: 10,
+        ),
+        //SizedBox(height: distancia),
+        Text('Total depositado em $coinstr foi: $valorDepositado'),
         const Divider(
           height: 10,
         ),
