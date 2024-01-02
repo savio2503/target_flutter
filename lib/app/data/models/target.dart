@@ -24,12 +24,12 @@ class TargetModel {
   factory TargetModel.fromJson(Map<String, dynamic> json) => TargetModel(
         id: json['id'],
         descricao: json['descricao'],
-        valor: double.parse(json['valor']!),
+        valor: json['valor']!,
         posicao: json['posicao'],
         ativo: json['ativo'] == 1,
         imagem: json['imagem'],
         coin: json['coin_id'],
-        valorAtual: double.parse(json['total_deposit'] ?? "0.00"),
+        valorAtual: json['total_deposit'] ?? 0.00,
         porcetagem: json['porcetagem'],
       );
 
