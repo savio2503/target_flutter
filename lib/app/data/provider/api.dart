@@ -58,7 +58,6 @@ class Api extends GetConnect {
     printd("retorno getTargets($ativo) = ${response.body}");
 
     for (var target in response.body) {
-
       targets.add(TargetModel.fromJson(target));
     }
 
@@ -72,8 +71,9 @@ class Api extends GetConnect {
   }
 
   Future<List<DeposityModel>> getAllDeposity(int targetId) async {
+    printd("allDeposity($targetId)");
     var response = _errorHandler(await get('deposit/$targetId'));
-
+    printd("response: allDeposity($response)");
     List<DeposityModel> deposits = [];
 
     for (var row in response.body) {
@@ -134,7 +134,6 @@ class Api extends GetConnect {
   }
 
   Future<List<CoinModel>> getAllCoins() async {
-
     var response = _errorHandler(await get('allCoin'));
 
     List<CoinModel> coins = [];
@@ -158,6 +157,7 @@ class Api extends GetConnect {
       case 204:
         return response;
       default:
+        printd("-> erro response: ${response.bodyString}");
         if (errorMessage == null) {
           throw 'Por favor, realize um login';
         } else if (errorMessage.contains("E_UNAUTHORIZED_ACCESS")) {

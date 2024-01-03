@@ -14,7 +14,7 @@ class DeposityModel {
   factory DeposityModel.fromJson(Map<String, dynamic> json) => DeposityModel(
         id: json['id'],
         targetId: json['target_id'],
-        valor: double.parse(json['valor']!),
+        valor: json['valor'],
         createAt: json['created_at'].toString().substring(0, 19).replaceAll('T', ' '),
       );
 

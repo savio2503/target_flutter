@@ -21,7 +21,8 @@ class ItemPage extends GetView<ItemController> {
   late List<String> opcoesCoins;
   late String valorDepositado;
   late String coinstr;
-
+  late int id;
+//int id = args.containsKey('id') ? args['id'] ?? -1 : -1;
   ItemPage({super.key}) {
     //printd("arg: ${Get.arguments}");
     Map<String, dynamic> args = Get.arguments ?? {};
@@ -32,6 +33,8 @@ class ItemPage extends GetView<ItemController> {
     controller.setValor(target.valor.toDouble());
     controller.setPeso(target.posicao);
     controller.setImage(target.imagem ?? " ");
+
+    id = target.id;
 
     List<CoinModel> coins = Get.find<CoinService>().coins;
     opcoesCoins = <String>[];
@@ -47,8 +50,10 @@ class ItemPage extends GetView<ItemController> {
     controller.setCoin(opcoesCoins[coinId]);
     controller.setCoinId(coinId);
 
-    valorDepositado = NumberFormat.simpleCurrency(name: coins[(target.coin - 1).toInt()].symbol, decimalDigits: 2).format(((target.valor * target.porcetagem) / 100));
-    coinstr    = coins[(target.coin - 1).toInt()].name;
+    valorDepositado = NumberFormat.simpleCurrency(
+            name: coins[(target.coin - 1).toInt()].symbol, decimalDigits: 2)
+        .format(((target.valor * target.porcetagem) / 100));
+    coinstr = coins[(target.coin - 1).toInt()].name;
   }
 
   Future<void> processImage(int id) async {
@@ -62,16 +67,22 @@ class ItemPage extends GetView<ItemController> {
   Widget build(BuildContext context) {
     const distancia = 20.0;
     Map<String, dynamic> args = Get.arguments ?? {};
-    int id = args.containsKey('id') ? args['id'] ?? -1 : -1;
 
     processImage(id);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Editar objetivo', style: TextStyle(color: Colors.white,),),
+        title: const Text(
+          'Editar objetivo',
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
         centerTitle: true,
         backgroundColor: Colors.blue,
-        iconTheme: IconThemeData(color: Colors.white,),
+        iconTheme: IconThemeData(
+          color: Colors.white,
+        ),
       ),
       body: SingleChildScrollView(
         child: Obx(
