@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:get/get.dart';
 import 'package:get/get_connect/http/src/request/request.dart';
@@ -17,8 +18,8 @@ class Api extends GetConnect {
 
   @override
   void onInit() {
-    httpClient.baseUrl = 'http://100.96.1.2:3333/';
-    //httpClient.baseUrl = 'http://192.168.1.9:3333/';
+    //httpClient.baseUrl = 'http://100.96.1.2:3333/';
+    httpClient.baseUrl = 'http://192.168.1.18:3333/';
     //httpClient.baseUrl = 'http://192.168.0.192:3333/';
 
     httpClient.addRequestModifier((Request request) {
@@ -60,6 +61,8 @@ class Api extends GetConnect {
     for (var target in response.body) {
       targets.add(TargetModel.fromJson(target));
     }
+
+    //sleep(const Duration(seconds: 2));
 
     return targets;
   }

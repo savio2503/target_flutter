@@ -4,8 +4,8 @@ import 'package:target/app/modules/dashboard/repository.dart';
 import 'package:target/app/tools/functions.dart';
 
 class DashboardController extends GetxController {
-    //with StateMixin<List<TargetModel>> {
-      
+  //with StateMixin<List<TargetModel>> {
+
   final DashboardRepository _repository;
 
   DashboardController(this._repository);
@@ -25,7 +25,7 @@ class DashboardController extends GetxController {
   getAllTarget() {
     printd("getAllTarget()");
     loading.value = true;
-    _repository.getTargets(true).then((value) {
+    _repository.getTargets(null).then((value) {
       if (value.isEmpty) {
         sucessReturn.value = true;
         loading.value = false;
