@@ -12,7 +12,7 @@ class StorageService extends GetxService {
   @override
   void onInit() {
     _token.value = box.read(StorageKey.token.toString());
-    _session.value = box.read(StorageKey.token.toString());
+    _session.value = box.read(StorageKey.session.toString());
 
     box.listenKey(
       StorageKey.token.toString(),

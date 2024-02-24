@@ -8,7 +8,7 @@ class AuthRepository {
 
   AuthRepository(this._api);
 
-  Future<UserLoginResponseModel> login(
+  Future<void> login(
           UserLoginRequestModel userLoginRequestModel) =>
       _api.login(userLoginRequestModel);
 

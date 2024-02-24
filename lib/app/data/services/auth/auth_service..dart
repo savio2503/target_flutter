@@ -22,11 +22,11 @@ class AuthService extends GetxService {
 
   Future<void> login(UserLoginRequestModel userLoginRequestModel) async {
     //printd("in login service");
-    var userLoginResponse = await _repository.login(userLoginRequestModel);
-    await _storageService.saveToken(userLoginResponse.token);
+    await _repository.login(userLoginRequestModel);
+    await _storageService.saveToken("token");
     await _getUser();
 
-    printd(userLoginResponse.token);
+    //printd(userLoginResponse.token);
     //printd("out login service");
   }
 

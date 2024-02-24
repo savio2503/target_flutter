@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:get/get.dart';
 import 'package:get/get_connect/http/src/request/request.dart';
@@ -8,7 +9,6 @@ import 'package:target/app/data/models/target.dart';
 import 'package:target/app/data/models/target_request.dart';
 import 'package:target/app/data/models/user.dart';
 import 'package:target/app/data/models/user_login_request.dart';
-import 'package:target/app/data/models/user_login_response.dart';
 import 'package:target/app/data/services/storage/storage_service.dart';
 import 'package:target/app/tools/functions.dart';
 
@@ -34,7 +34,7 @@ class Api extends GetConnect {
       var session = _storageService.session;
 
       var authorization = {'Authorization': 'Bearer $token'};
-      var cookie = {'Cookie': 'adonis-session=$session'};
+      var cookie = {'Cookie': '$session'};
 
       //printd("token: $token");
 
@@ -47,14 +47,32 @@ class Api extends GetConnect {
     super.onInit();
   }
 
+  Map<String, String> getHeaders() {
+
+    Map<String, String> res = {};
+
+    var token = _storageService.token;
+    var session = _storageService.session;
+
+    var authorization = {'Authorization': 'Bearer $token'};
+    var cookie = {'Cookie': '$session'};
+    var keep = {'Connection': 'keep-alive'};
+
+    res.addAll(authorization);
+    res.addAll(cookie);
+    res.addAll(keep);
+
+    return res;
+  }
+
   Future<List<TargetModel>> getTargets(bool? ativo) async {
     dynamic response;
     if (ativo == null) {
-      response = _errorHandler(await get('all'));
+      response = _errorHandler(await get('all', headers: getHeaders()));
     } else if (ativo) {
-      response = _errorHandler(await get('allAtive'));
+      response = _errorHandler(await get('allAtive', headers: getHeaders()));
     } else {
-      response = _errorHandler(await get('all'));
+      response = _errorHandler(await get('all', headers: getHeaders()));
     }
 
     List<TargetModel> targets = [];
@@ -71,14 +89,14 @@ class Api extends GetConnect {
   }
 
   Future<String> getImagem(int targetId) async {
-    var response = _errorHandler(await get('image/$targetId'));
+    var response = _errorHandler(await get('image/$targetId', headers: getHeaders()));
 
     return response.body;
   }
 
   Future<List<DeposityModel>> getAllDeposity(int targetId) async {
     printd("allDeposity($targetId)");
-    var response = _errorHandler(await get('deposit/$targetId'));
+    var response = _errorHandler(await get('deposit/$targetId', headers: getHeaders()));
     printd("response: allDeposity($response)");
     List<DeposityModel> deposits = [];
 
@@ -91,23 +109,50 @@ class Api extends GetConnect {
   }
 
   Future<TargetModel> getTarget(int id) async {
-    var response = _errorHandler(await get(''));
+    var response = _errorHandler(await get('', headers: getHeaders()));
 
     return TargetModel.fromJson(response.body);
   }
 
-  Future<UserLoginResponseModel> login(UserLoginRequestModel data) async {
+  Future<void> login(UserLoginRequestModel data) async {
     printd("chamando o login, body: ${jsonEncode(data)}");
     var response = _errorHandler(await post('login', jsonEncode(data)));
     printd("retorno login");
-    return UserLoginResponseModel.fromJson(response.body);
+
+    //pegando o cookie na resposta
+    response.headers!.forEach((key, value) {
+      if (key == HttpHeaders.setCookieHeader) {
+        String cookie = "";
+        
+        /*RegExp regex = RegExp(r"adonis-session=([^;]+)");
+        Match? match = regex.firstMatch(value);
+        if (match != null) {
+          cookie = match.group(1) ?? "";
+        }*/
+
+        RegExp regex = RegExp(r"SameSite=([^;]+),([^;]+)");
+        Iterable<Match> matches = regex.allMatches(value);
+        List<String> values = [];
+
+        matches.forEach((element) {
+          String? value = element.group(2);
+          if (value != null && value.isNotEmpty) {
+            values.add(value);
+          }
+        });
+
+        cookie = values.join('; ');
+
+        _storageService.saveSession(cookie);
+      }
+    });
   }
 
   Future<UserModel> getUser() async {
 
     if (_storageService.session != null && _storageService.session!.isNotEmpty ) {
 
-      var response = _errorHandler(await get('auth/me'));
+      var response = _errorHandler(await get('auth/me', headers: getHeaders()));
       return UserModel.fromJson(response.body);
 
     } else {
@@ -119,7 +164,7 @@ class Api extends GetConnect {
   Future<void> addTarget(TargetRequestModel target) async {
     printd('chamando o add target, body: ${jsonEncode(target)}');
 
-    _errorHandler(await post('target', jsonEncode(target)));
+    _errorHandler(await post('target', jsonEncode(target), headers: getHeaders()));
 
     return; //TargetModel.fromJson(response.body);
   }
@@ -127,13 +172,13 @@ class Api extends GetConnect {
   Future<void> editarTarget(TargetRequestModel target) async {
     printd('chamando o editar target, body: ${jsonEncode(target)}');
 
-    _errorHandler(await put('target/${target.id}', jsonEncode(target)));
+    _errorHandler(await put('target/${target.id}', jsonEncode(target), headers: getHeaders()));
 
     return; //TargetModel.fromJson(response.body);
   }
 
   Future<void> deposit(double amount) async {
-    _errorHandler(await post('inside', '{"valor":$amount}'));
+    _errorHandler(await post('inside', '{"valor":$amount}', headers: getHeaders()));
 
     return;
   }
@@ -141,13 +186,13 @@ class Api extends GetConnect {
   Future<void> deleteTarget(int id) async {
     printd("delete id: $id");
 
-    _errorHandler(await delete('target/$id'));
+    _errorHandler(await delete('target/$id', headers: getHeaders()));
 
     return;
   }
 
   Future<List<CoinModel>> getAllCoins() async {
-    var response = _errorHandler(await get('allCoin'));
+    var response = _errorHandler(await get('allCoin', headers: getHeaders()));
 
     List<CoinModel> coins = [];
 
