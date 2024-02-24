@@ -2,7 +2,7 @@ import 'package:get/get.dart';
 import 'package:target/app/data/models/user.dart';
 import 'package:target/app/data/models/user_login_request.dart';
 import 'package:target/app/data/services/auth/repositoy.dart';
-import 'package:target/app/data/services/storage/service.dart';
+import 'package:target/app/data/services/storage/storage_service.dart';
 import 'package:target/app/tools/functions.dart';
 
 class AuthService extends GetxService {
@@ -31,11 +31,13 @@ class AuthService extends GetxService {
   }
 
   Future _getUser() {
-    return _repository.getUser().then((value) => user.value = value);
+    return _repository.getUser().then((value) => user.value = value, onError: (error) => user.value = null);
   }
 
   Future<void> logout() async {
     await _storageService.saveToken("");
+    await _storageService.saveSession("");
+
     user.value = null;
   }
 }
