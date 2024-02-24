@@ -18,8 +18,9 @@ class Api extends GetConnect {
   @override
   void onInit() {
     //httpClient.baseUrl = 'http://100.96.1.2:3333/';
-    httpClient.baseUrl = 'http://192.168.1.11:3333/';
+    //httpClient.baseUrl = 'http://192.168.1.11:3333/';
     //httpClient.baseUrl = 'http://192.168.0.192:3333/';
+    httpClient.baseUrl = 'http://192.168.1.22:3333/';
 
     httpClient.addRequestModifier((Request request) {
       request.headers['Accept'] = 'application/json';
@@ -67,6 +68,7 @@ class Api extends GetConnect {
 
   Future<List<TargetModel>> getTargets(bool? ativo) async {
     dynamic response;
+
     if (ativo == null) {
       response = _errorHandler(await get('all', headers: getHeaders()));
     } else if (ativo) {
@@ -77,7 +79,7 @@ class Api extends GetConnect {
 
     List<TargetModel> targets = [];
 
-    printd("retorno getTargets($ativo) = ${response.body}");
+    //printd("retorno getTargets($ativo) = ${response.body}");
 
     for (var target in response.body) {
       targets.add(TargetModel.fromJson(target));
@@ -95,14 +97,17 @@ class Api extends GetConnect {
   }
 
   Future<List<DeposityModel>> getAllDeposity(int targetId) async {
-    printd("allDeposity($targetId)");
+    //printd("allDeposity($targetId)");
     var response = _errorHandler(await get('deposit/$targetId', headers: getHeaders()));
-    printd("response: allDeposity($response)");
+    //printd("response: allDeposity(${response.bodyString})");
     List<DeposityModel> deposits = [];
 
     for (var row in response.body) {
       //printd('add: $row');
-      deposits.add(DeposityModel.fromJson(row));
+      var aux = DeposityModel.fromJson(row);
+      if (aux.valor != 0) {
+        deposits.add(aux);
+      }
     }
 
     return deposits;

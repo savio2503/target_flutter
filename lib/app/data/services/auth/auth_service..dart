@@ -15,23 +15,28 @@ class AuthService extends GetxService {
 
   @override
   void onInit() async {
-    await _getUser();
+    await getUser();
 
     super.onInit();
   }
 
   Future<void> login(UserLoginRequestModel userLoginRequestModel) async {
     //printd("in login service");
+    user.value = null;
     await _repository.login(userLoginRequestModel);
     await _storageService.saveToken("token");
-    await _getUser();
+    await getUser();
 
-    //printd(userLoginResponse.token);
+    printd("user logado: ${user.value != null ? user.value.toString() : "nulo"}");
     //printd("out login service");
   }
 
-  Future _getUser() {
-    return _repository.getUser().then((value) => user.value = value, onError: (error) => user.value = null);
+  Future getUser() async {
+    if (user.value == null) {
+      await _repository.getUser().then((value) => user.value = value,
+          onError: (error) => user.value = null);
+    }
+    printd("user logado: ${user.value != null ? user.value.toString() : "nulo"}");
   }
 
   Future<void> logout() async {

@@ -1,11 +1,11 @@
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:target/app/data/models/target.dart';
 import 'package:target/app/data/services/auth/auth_service..dart';
 import 'package:target/app/modules/dashboard/repository.dart';
 import 'package:target/app/tools/functions.dart';
 
 class DashboardController extends GetxController {
-  //with StateMixin<List<TargetModel>> {
 
   final DashboardRepository _repository;
 
@@ -15,6 +15,8 @@ class DashboardController extends GetxController {
   var countTargets = 0.obs;
   RxList<TargetModel> listaTargets = <TargetModel>[].obs;
   var loading = false.obs;
+  var sumOfAssets = RxNum(0.0);
+  var sumOfCompleted = RxNum(0.0);
 
   @override
   void onInit() {
@@ -23,9 +25,11 @@ class DashboardController extends GetxController {
     super.onInit();
   }
 
-  getAllTarget() {
+  getAllTarget() async {
     printd("getAllTarget()");
     final _authService = Get.find<AuthService>();
+
+    await _authService.getUser();
 
     if (_authService.isLogged) {
       loading.value = true;
@@ -38,6 +42,17 @@ class DashboardController extends GetxController {
           sucessReturn.value = true;
           loading.value = false;
           countTargets.value = value.length;
+
+          sumOfAssets.value = 0;
+          sumOfCompleted.value = 0;
+
+          listaTargets.forEach((element) {
+            if (element.ativo) {
+              sumOfAssets.value += element.valorAtual;
+            } else {
+              sumOfCompleted.value += element.valor;
+            }
+          });
         }
       }, onError: (error) {
         //change([], status: RxStatus.error(error.toString()));

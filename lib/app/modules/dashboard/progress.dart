@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:target/app/data/models/target.dart';
 import 'package:target/app/modules/dashboard/commum.dart';
 import 'package:target/app/modules/dashboard/controller.dart';
@@ -29,7 +30,7 @@ class _ProgressTargetState extends State<ProgressTarget> {
 
     for (var target in widget.targets) {
       if (target.ativo) {
-        printd("Adicionando nos progressos: $target");
+        //printd("Adicionando nos progressos: $target");
         targetsProgress.add(target);
       }
     }
@@ -63,7 +64,7 @@ class _ProgressTargetState extends State<ProgressTarget> {
       children: [
         Container(
           padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: Text("Total Investido: ${sumTotalList(targetsProgress)}"),
+          child: Text("Total Investido: ${NumberFormat.simpleCurrency().format(widget.controller.sumOfAssets.value)}"),
         ),
         Expanded(
           child: GridView.count(

@@ -28,8 +28,8 @@ class TargetModel {
         posicao: json['posicao'],
         ativo: json['ativo'] == 1,
         imagem: json['imagem'],
-        coin: json['coin_id'],
-        valorAtual: json['total_deposit'] ?? 0.00,
+        coin: json['coin'],
+        valorAtual: json['total'] ?? 0.00,
         porcetagem: json['porcetagem'],
       );
 

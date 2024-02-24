@@ -23,7 +23,7 @@ class DashboardPage extends GetView<DashboardController> {
               onPressed: () async {
                 var created = await Get.toNamed(Routes.add);
 
-                if (created != null && created) controller.getAllTarget();
+                if (created != null && created) await controller.getAllTarget();
               },
               icon: const Icon(
                 Icons.add,
@@ -43,7 +43,7 @@ class DashboardPage extends GetView<DashboardController> {
                 onPressed: () async {
                   await Get.toNamed(Routes.login);
 
-                  controller.getAllTarget();
+                  await controller.getAllTarget();
                 },
                 icon: const Icon(
                   Icons.account_circle,

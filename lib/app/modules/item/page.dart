@@ -394,8 +394,7 @@ class ItemPage extends GetView<ItemController> {
             if (snapshot.hasData) {
               final List<DeposityModel> depositys = snapshot.data!;
 
-              printd(
-                  "lista: ${depositys.toString()}, tamanho: ${depositys.length}");
+              //printd("lista: ${depositys.toString()}, tamanho: ${depositys.length}");
 
               if (depositys.isNotEmpty) {
                 return Column(

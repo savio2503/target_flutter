@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:target/app/data/models/target.dart';
 import 'package:target/app/modules/dashboard/commum.dart';
 import 'package:target/app/modules/dashboard/controller.dart';
@@ -31,7 +32,7 @@ class _ConcludedTargetState extends State<ConcludedTarget> {
 
     for (var target in widget.targets) {
       if (!target.ativo) {
-        printd("Adicionando nos concluidos: $target");
+        //printd("Adicionando nos concluidos: $target");
         targetsConcluidos.add(target);
       }
     }
@@ -64,7 +65,7 @@ class _ConcludedTargetState extends State<ConcludedTarget> {
       children: [
         Container(
           padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: Text("Total Investido: ${sumTotalList(targetsConcluidos)}"),
+          child: Text("Total Investido: ${NumberFormat.simpleCurrency().format(widget.controller.sumOfCompleted.value)}"),
         ),
         Expanded(
           child: GridView.count(
