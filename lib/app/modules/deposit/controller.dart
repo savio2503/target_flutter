@@ -17,14 +17,14 @@ class DepositController extends GetxController {
       if (valor != 0.0) {
         valor = positivo ? valor : (-1 * valor);
 
-        printd("chamando o deposito, com o valor de: " + valor.toString());
+        printd("chamando o deposito, com o valor de: $valor");
 
         await _repository.deposit(valor);
 
         Get.back();
       }
     } catch (err) {
-      printd("error ao enviar o deposito: " + err.toString());
+      printd("error ao enviar o deposito: $err");
     }
   }
 }

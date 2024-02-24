@@ -3,7 +3,7 @@ import 'package:target/app/modules/login/controller.dart';
 import 'package:target/app/tools/functions.dart';
 
 class Login extends StatelessWidget {
-  const Login(this.controller);
+  const Login(this.controller, {super.key});
 
   final LoginController controller;
 

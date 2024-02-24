@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:get/get.dart';
 import 'package:get/get_connect/http/src/request/request.dart';
@@ -10,7 +9,7 @@ import 'package:target/app/data/models/target_request.dart';
 import 'package:target/app/data/models/user.dart';
 import 'package:target/app/data/models/user_login_request.dart';
 import 'package:target/app/data/models/user_login_response.dart';
-import 'package:target/app/data/services/storage/service.dart';
+import 'package:target/app/data/services/storage/storage_service.dart';
 import 'package:target/app/tools/functions.dart';
 
 class Api extends GetConnect {
@@ -19,7 +18,7 @@ class Api extends GetConnect {
   @override
   void onInit() {
     //httpClient.baseUrl = 'http://100.96.1.2:3333/';
-    httpClient.baseUrl = 'http://192.168.1.18:3333/';
+    httpClient.baseUrl = 'http://192.168.1.11:3333/';
     //httpClient.baseUrl = 'http://192.168.0.192:3333/';
 
     httpClient.addRequestModifier((Request request) {
@@ -32,11 +31,15 @@ class Api extends GetConnect {
 
     httpClient.addAuthenticator((Request request) {
       var token = _storageService.token;
-      var headers = {'Authorization': 'Bearer $token'};
+      var session = _storageService.session;
+
+      var authorization = {'Authorization': 'Bearer $token'};
+      var cookie = {'Cookie': 'adonis-session=$session'};
 
       //printd("token: $token");
 
-      request.headers.addAll(headers);
+      request.headers.addAll(authorization);
+      request.headers.addAll(cookie);
 
       return request;
     });
@@ -101,9 +104,16 @@ class Api extends GetConnect {
   }
 
   Future<UserModel> getUser() async {
-    var response = _errorHandler(await get('auth/me'));
 
-    return UserModel.fromJson(response.body);
+    if (_storageService.session != null && _storageService.session!.isNotEmpty ) {
+
+      var response = _errorHandler(await get('auth/me'));
+      return UserModel.fromJson(response.body);
+
+    } else {
+      throw 'Não logado';
+    }
+
   }
 
   Future<void> addTarget(TargetRequestModel target) async {

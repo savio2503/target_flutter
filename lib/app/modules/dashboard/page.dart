@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
-import 'package:target/app/data/models/target.dart';
 import 'package:target/app/modules/dashboard/commum.dart';
 import 'package:target/app/modules/dashboard/concluded.dart';
 import 'package:target/app/modules/dashboard/progress.dart';
 import 'package:target/app/modules/dashboard/controller.dart';
-import 'package:target/app/tools/functions.dart';
 import 'package:target/routes/routes.dart';
 
 class DashboardPage extends GetView<DashboardController> {
@@ -14,8 +11,6 @@ class DashboardPage extends GetView<DashboardController> {
 
   @override
   Widget build(BuildContext context) {
-    final double width = MediaQuery.of(context).size.width - 82;
-    final double width_grid = (MediaQuery.of(context).size.width / 2) - 41;
 
     //printd("width: $width");
 

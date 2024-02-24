@@ -163,8 +163,8 @@ class AddPage extends GetView<AddController> {
         value: controller.selectCoin.value,
         onChanged: (String? value) {
           printd("selecionou $value, ${opcoesCoins.indexOf(value!)}");
-          controller.setCoin(value!);
-          controller.setCoinId(opcoesCoins.indexOf(value!));
+          controller.setCoin(value);
+          controller.setCoinId(opcoesCoins.indexOf(value));
         },
         buttonStyleData: ButtonStyleData(
           height: 50,

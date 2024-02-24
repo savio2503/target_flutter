@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:ffi';
 import 'dart:io' as io;
 
 import 'package:adaptive_dialog/adaptive_dialog.dart';
@@ -22,6 +21,7 @@ class ItemPage extends GetView<ItemController> {
   late String valorDepositado;
   late String coinstr;
   late int id;
+  late bool concluido;
 //int id = args.containsKey('id') ? args['id'] ?? -1 : -1;
   ItemPage({super.key}) {
     //printd("arg: ${Get.arguments}");
@@ -54,6 +54,8 @@ class ItemPage extends GetView<ItemController> {
             name: coins[(target.coin - 1).toInt()].symbol, decimalDigits: 2)
         .format(((target.valor * target.porcetagem) / 100));
     coinstr = coins[(target.coin - 1).toInt()].name;
+
+    concluido = !target.ativo;
   }
 
   Future<void> processImage(int id) async {
@@ -66,7 +68,6 @@ class ItemPage extends GetView<ItemController> {
   @override
   Widget build(BuildContext context) {
     const distancia = 20.0;
-    Map<String, dynamic> args = Get.arguments ?? {};
 
     processImage(id);
 
@@ -80,7 +81,7 @@ class ItemPage extends GetView<ItemController> {
         ),
         centerTitle: true,
         backgroundColor: Colors.blue,
-        iconTheme: IconThemeData(
+        iconTheme: const IconThemeData(
           color: Colors.white,
         ),
       ),
@@ -104,6 +105,7 @@ class ItemPage extends GetView<ItemController> {
                     return null;
                   },
                   onChanged: (value) => controller.setDescricao(value),
+                  readOnly: concluido,
                 ),
                 const SizedBox(height: distancia),
                 Row(
@@ -123,59 +125,13 @@ class ItemPage extends GetView<ItemController> {
                         ],
                         keyboardType: TextInputType.number,
                         controller: controller.valorController,
+                        readOnly: concluido,
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(height: distancia),
-                const Text('Selecione o peso do objetivo'),
-                const SizedBox(height: distancia),
-                WheelChooser.integer(
-                  onValueChanged: controller.setPeso,
-                  maxValue: 10,
-                  minValue: 1,
-                  step: 1,
-                  initValue: controller.peso.value,
-                  horizontal: true,
-                  listHeight: 200,
-                  listWidth: 50,
-                ),
-                const SizedBox(height: distancia * 2),
-                Row(
-                  children: [
-                    const Spacer(),
-                    ElevatedButton(
-                      style: ButtonStyle(
-                        foregroundColor:
-                            MaterialStateProperty.all<Color>(Colors.blue),
-                      ),
-                      onPressed: () async {
-                        if (controller.descricaoController.text.isEmpty ||
-                            (controller.valorController.text.isEmpty ||
-                                controller.valorController.text
-                                    .contains(" 0,00"))) {
-                          printd("campos de descricao ou de valor incorretos!");
-                          return;
-                        }
-
-                        await controller.send(id);
-                      },
-                      child: const Text('Salvar'),
-                    ),
-                    const Spacer(),
-                    ElevatedButton(
-                      style: ButtonStyle(
-                        foregroundColor:
-                            MaterialStateProperty.all<Color>(Colors.red),
-                      ),
-                      onPressed: () async {
-                        await controller.delete(id);
-                      },
-                      child: const Text('Excluir'),
-                    ),
-                    const Spacer(),
-                  ],
-                ),
+                if (!concluido) editPesoAndButton(controller),
                 getHistoric(controller, distancia, id),
                 const SizedBox(height: 30),
               ],
@@ -183,6 +139,59 @@ class ItemPage extends GetView<ItemController> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget editPesoAndButton(ItemController controller) {
+    const double distancia = 20;
+    return Column(
+      children: [
+        const Text('Selecione o peso do objetivo'),
+        const SizedBox(height: distancia),
+        WheelChooser.integer(
+          onValueChanged: controller.setPeso,
+          maxValue: 10,
+          minValue: 1,
+          step: 1,
+          initValue: controller.peso.value,
+          horizontal: true,
+          listHeight: 200,
+          listWidth: 50,
+        ),
+        const SizedBox(height: distancia * 2),
+        Row(
+          children: [
+            const Spacer(),
+            ElevatedButton(
+              style: ButtonStyle(
+                foregroundColor: MaterialStateProperty.all<Color>(Colors.blue),
+              ),
+              onPressed: () async {
+                if (controller.descricaoController.text.isEmpty ||
+                    (controller.valorController.text.isEmpty ||
+                        controller.valorController.text.contains(" 0,00"))) {
+                  printd("campos de descricao ou de valor incorretos!");
+                  return;
+                }
+
+                await controller.send(id);
+              },
+              child: const Text('Salvar'),
+            ),
+            const Spacer(),
+            ElevatedButton(
+              style: ButtonStyle(
+                foregroundColor: MaterialStateProperty.all<Color>(Colors.red),
+              ),
+              onPressed: () async {
+                await controller.delete(id);
+              },
+              child: const Text('Excluir'),
+            ),
+            const Spacer(),
+          ],
+        ),
+      ],
     );
   }
 
@@ -230,8 +239,8 @@ class ItemPage extends GetView<ItemController> {
         value: controller.selectCoin.value,
         onChanged: (String? value) {
           printd("selecionou $value, ${opcoesCoins.indexOf(value!)}");
-          controller.setCoin(value!);
-          controller.setCoinId(opcoesCoins.indexOf(value!));
+          controller.setCoin(value);
+          controller.setCoinId(opcoesCoins.indexOf(value));
         },
         buttonStyleData: ButtonStyleData(
           height: 50,

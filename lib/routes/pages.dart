@@ -35,7 +35,7 @@ abstract class AppPages {
     ),
     GetPage(
       name: Routes.deposit,
-      page: () => DepositPage(),
+      page: () => const DepositPage(),
       binding: DepositBinding(),
     ),
   ];

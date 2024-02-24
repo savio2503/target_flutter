@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:target/app/data/models/target.dart';
 import 'package:target/app/modules/dashboard/commum.dart';
 import 'package:target/app/modules/dashboard/controller.dart';
 import 'package:target/app/tools/functions.dart';
 import 'package:target/routes/routes.dart';
+
+import '../../data/services/auth/auth_service..dart';
 
 class ProgressTarget extends StatefulWidget {
   const ProgressTarget(this.controller, this.targets, {super.key});
@@ -19,9 +20,11 @@ class ProgressTarget extends StatefulWidget {
 
 class _ProgressTargetState extends State<ProgressTarget> {
   List<TargetModel> targetsProgress = [];
+  final _authService = Get.find<AuthService>();
 
   @override
   Widget build(BuildContext context) {
+    final double width = MediaQuery.of(context).size.width - 82;
     targetsProgress.clear();
 
     for (var target in widget.targets) {
@@ -30,6 +33,7 @@ class _ProgressTargetState extends State<ProgressTarget> {
         targetsProgress.add(target);
       }
     }
+
     if (widget.controller.loading.value) {
       return const Column(
         children: [
@@ -39,6 +43,13 @@ class _ProgressTargetState extends State<ProgressTarget> {
           ),
           Spacer(),
         ],
+      );
+    }
+
+    if (!_authService.isLogged) {
+      return const Align(
+        alignment: Alignment.center,
+        child: Text("Por Favor, realizar login"),
       );
     }
 
@@ -81,7 +92,7 @@ class _ProgressTargetState extends State<ProgressTarget> {
                         aspectRatio: 18.0 / 11.0,
                         child: returnImageFromString(
                           targetsProgress[index].imagem,
-                          100,
+                          width,
                           const Icon(
                             Icons.local_mall,
                             size: 50,

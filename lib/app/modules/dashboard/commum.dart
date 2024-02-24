@@ -21,7 +21,7 @@ Widget btnDeposit(DashboardController controller) {
     return SizedBox(
       width: 50,
       child: GestureDetector(
-        child: Icon(
+        child: const Icon(
           Icons.currency_exchange,
           size: 50.0,
         ), //Image.asset('assets/images/depositarOuRetirar.png'),

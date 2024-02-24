@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:target/app/modules/login/controller.dart';
 
 class SignUp extends StatelessWidget {
-  const SignUp(this.controller);
+  const SignUp(this.controller, {super.key});
 
   final LoginController controller;
 

@@ -1,4 +1,3 @@
-import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:target/app/data/models/target.dart';
@@ -6,6 +5,8 @@ import 'package:target/app/modules/dashboard/commum.dart';
 import 'package:target/app/modules/dashboard/controller.dart';
 import 'package:target/app/tools/functions.dart';
 import 'package:target/routes/routes.dart';
+
+import '../../data/services/auth/auth_service..dart';
 
 class ConcludedTarget extends StatefulWidget {
   const ConcludedTarget(this.controller, this.targets, {super.key});
@@ -19,9 +20,13 @@ class ConcludedTarget extends StatefulWidget {
 
 class _ConcludedTargetState extends State<ConcludedTarget> {
   List<TargetModel> targetsConcluidos = [];
+  final _authService = Get.find<AuthService>();
 
   @override
   Widget build(BuildContext context) {
+    final double width = MediaQuery.of(context).size.width - 82;
+    //final double width_grid = (MediaQuery.of(context).size.width / 2) - 41;
+
     targetsConcluidos.clear();
 
     for (var target in widget.targets) {
@@ -39,6 +44,13 @@ class _ConcludedTargetState extends State<ConcludedTarget> {
           ),
           Spacer(),
         ],
+      );
+    }
+
+    if (!_authService.isLogged) {
+      return const Align(
+        alignment: Alignment.center,
+        child: Text("Por Favor, realizar login"),
       );
     }
 
@@ -83,7 +95,7 @@ class _ConcludedTargetState extends State<ConcludedTarget> {
                         aspectRatio: 18.0 / 11.0,
                         child: returnImageFromString(
                           targetsConcluidos[index].imagem,
-                          100,
+                          width,
                           const Icon(
                             Icons.local_mall,
                             size: 50,

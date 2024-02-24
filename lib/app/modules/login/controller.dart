@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:target/app/data/models/user_login_request.dart';
-import 'package:target/app/data/services/auth/service..dart';
+import 'package:target/app/data/services/auth/auth_service..dart';
 import 'package:target/app/data/services/coin/service.dart';
-import 'package:target/app/data/services/storage/service.dart';
+import 'package:target/app/data/services/storage/storage_service.dart';
 import 'package:target/app/tools/functions.dart';
 
 class LoginController extends GetxController {
