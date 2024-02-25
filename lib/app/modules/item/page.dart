@@ -34,6 +34,8 @@ class ItemPage extends GetView<ItemController> {
     controller.setPeso(target.posicao);
     controller.setImage(target.imagem ?? " ");
 
+    print("imagem parametro: ${target.imagem?.substring(0, 50)}");
+
     id = target.id;
 
     List<CoinModel> coins = Get.find<CoinService>().coins;
@@ -92,7 +94,7 @@ class ItemPage extends GetView<ItemController> {
                 const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
             child: Column(
               children: [
-                getImagem(controller, context),
+                getImagem(context),
                 TextFormField(
                   controller: controller.descricaoController,
                   decoration: const InputDecoration(
@@ -284,8 +286,7 @@ class ItemPage extends GetView<ItemController> {
     );
   }
 
-  Future<void> dialogGetImage(
-      ItemController controller, BuildContext context) async {
+  Future<void> dialogGetImage(BuildContext context) async {
     final result = await showConfirmationDialog<int>(
       context: context,
       title: 'Selecione a fonte da imagem',
@@ -323,32 +324,33 @@ class ItemPage extends GetView<ItemController> {
 
       if (mediaFile != null) {
         final bytes = io.File(mediaFile.path).readAsBytesSync();
-        controller.setImage(base64Encode(bytes));
+        final base64 = base64Encode(bytes);
+        print("imagem set: ${base64.substring(0, 50)}");
+        this.controller.setImage(base64);
       }
     }
   }
 
-  Widget addImage(ItemController controller, BuildContext context) {
+  Widget addImage(BuildContext context) {
     return ElevatedButton(
       style: ButtonStyle(
         foregroundColor: MaterialStateProperty.all<Color>(Colors.blue),
       ),
       onPressed: () async {
-        await dialogGetImage(controller, context);
+        await dialogGetImage(context);
       },
       child: const Text('Adicionar uma imagem'),
     );
   }
 
   Widget getImagem(
-    ItemController controller,
     BuildContext context,
   ) {
     //printd("getImagem: ${controller.image}");
 
     if (controller.image.value.isEmpty ||
         controller.image.value.compareTo(" ") == 0) {
-      return addImage(controller, context);
+      return addImage(context);
     }
 
     final double width = (MediaQuery.of(context).size.width - 40) * 0.75;
@@ -356,7 +358,7 @@ class ItemPage extends GetView<ItemController> {
     Widget? image = returnImageFromString(
       controller.image.value,
       width,
-      addImage(controller, context),
+      addImage(context),
     );
 
     //printd("size: $width, widget: ${image?.runtimeType}");
@@ -365,7 +367,7 @@ class ItemPage extends GetView<ItemController> {
       padding: const EdgeInsets.only(left: 15, top: 15),
       child: GestureDetector(
         onLongPress: () async {
-          await dialogGetImage(controller, context);
+          await dialogGetImage(context);
         },
         child: image,
       ),

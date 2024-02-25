@@ -1,5 +1,4 @@
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:target/app/data/models/target.dart';
 import 'package:target/app/data/services/auth/auth_service..dart';
 import 'package:target/app/modules/dashboard/repository.dart';

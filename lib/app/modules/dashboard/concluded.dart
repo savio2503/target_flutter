@@ -10,10 +10,9 @@ import 'package:target/routes/routes.dart';
 import '../../data/services/auth/auth_service..dart';
 
 class ConcludedTarget extends StatefulWidget {
-  const ConcludedTarget(this.controller, this.targets, {super.key});
+  const ConcludedTarget(this.controller, {super.key});
 
   final DashboardController controller;
-  final List<TargetModel> targets;
 
   @override
   State<ConcludedTarget> createState() => _ConcludedTargetState();
@@ -25,12 +24,13 @@ class _ConcludedTargetState extends State<ConcludedTarget> {
 
   @override
   Widget build(BuildContext context) {
+    final List<TargetModel> targets = widget.controller.listaTargets.value;
     final double width = MediaQuery.of(context).size.width - 82;
     //final double width_grid = (MediaQuery.of(context).size.width / 2) - 41;
 
     targetsConcluidos.clear();
 
-    for (var target in widget.targets) {
+    for (var target in targets) {
       if (!target.ativo) {
         //printd("Adicionando nos concluidos: $target");
         targetsConcluidos.add(target);

@@ -1,6 +1,5 @@
 import 'package:target/app/data/models/user.dart';
 import 'package:target/app/data/models/user_login_request.dart';
-import 'package:target/app/data/models/user_login_response.dart';
 import 'package:target/app/data/provider/api.dart';
 
 class AuthRepository {

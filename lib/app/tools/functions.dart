@@ -1,7 +1,13 @@
 import 'dart:convert';
+import 'dart:io';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:image/image.dart' as img;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:target/app/data/provider/api.dart';
+import 'package:target/app/tools/remove_background.dart';
 
 printd(String? msg) {
   if (kDebugMode) {
@@ -16,16 +22,32 @@ double currencyToDouble(String currency, {String symbol = 'R\$'}) {
   return double.parse(clear);
 }
 
-Widget returnImageFromString(String? source, double width, Widget empty) {
+Widget returnImageFromString(String? source, double width, Widget empty, {int? targetId}) {
   Widget? image;
 
   if (source != null && source.contains("http")) {
-    image = Image.network(
-      source,
-      width: width,
-      height: width,
-      errorBuilder: (context, exception, stacktrace) {
-        return empty;
+    image = FutureBuilder<Uint8List> (
+      future: RemoveBackground.removebg(source),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const SizedBox(height: 60, width: 60, child: CircularProgressIndicator(),);
+        } else if (snapshot.hasError) {
+          return Image.network(
+            source,
+            width: width,
+            height: width,
+            errorBuilder: (context, exception, stacktrace) {
+              return empty;
+            },
+          );
+        } else {
+          if (targetId != null) {
+            Api api = Get.find<Api>();
+            String image64 = base64Encode(snapshot.data!);
+            api.editarImage(targetId, image64);
+          }
+          return Image.memory(snapshot.data!);
+        }
       },
     );
   } else if (source != null && source.compareTo(" ") != 0) {

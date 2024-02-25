@@ -50,6 +50,7 @@ dependencies:
   adaptive_dialog: ^2.0.0
   image_picker: ^1.0.4
   dropdown_button2: ^2.3.9
+  image: ^4.1.7
 
 dev_dependencies:
   flutter_test:

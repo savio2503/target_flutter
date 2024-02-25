@@ -10,10 +10,9 @@ import 'package:target/routes/routes.dart';
 import '../../data/services/auth/auth_service..dart';
 
 class ProgressTarget extends StatefulWidget {
-  const ProgressTarget(this.controller, this.targets, {super.key});
+  const ProgressTarget(this.controller, {super.key});
 
   final DashboardController controller;
-  final List<TargetModel> targets;
 
   @override
   State<ProgressTarget> createState() => _ProgressTargetState();
@@ -25,10 +24,11 @@ class _ProgressTargetState extends State<ProgressTarget> {
 
   @override
   Widget build(BuildContext context) {
-    final double width = MediaQuery.of(context).size.width - 82;
+    final List<TargetModel> targets = widget.controller.listaTargets.value;
+    final double widthScreen = MediaQuery.of(context).size.width - 82;
     targetsProgress.clear();
 
-    for (var target in widget.targets) {
+    for (var target in targets) {
       if (target.ativo) {
         //printd("Adicionando nos progressos: $target");
         targetsProgress.add(target);
@@ -64,7 +64,8 @@ class _ProgressTargetState extends State<ProgressTarget> {
       children: [
         Container(
           padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: Text("Total Investido: ${NumberFormat.simpleCurrency().format(widget.controller.sumOfAssets.value)}"),
+          child: Text(
+              "Total Investido: ${NumberFormat.simpleCurrency().format(widget.controller.sumOfAssets.value)}"),
         ),
         Expanded(
           child: GridView.count(
@@ -89,7 +90,22 @@ class _ProgressTargetState extends State<ProgressTarget> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      AspectRatio(
+                      Center(
+                        child: SizedBox(
+                          height: (widthScreen / 2) - 45,
+                          width: (widthScreen / 2),
+                          child: returnImageFromString(
+                            targetsProgress[index].imagem,
+                            widthScreen,
+                            const Icon(
+                              Icons.local_mall,
+                              size: 50,
+                            ),
+                            targetId: targetsProgress[index].id
+                          ),
+                        ),
+                      ),
+                      /*AspectRatio(
                         aspectRatio: 18.0 / 11.0,
                         child: returnImageFromString(
                           targetsProgress[index].imagem,
@@ -99,7 +115,7 @@ class _ProgressTargetState extends State<ProgressTarget> {
                             size: 50,
                           ),
                         ),
-                      ),
+                      ),*/
                       Padding(
                         padding:
                             const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),

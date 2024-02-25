@@ -72,8 +72,8 @@ class DashboardPage extends GetView<DashboardController> {
           body: Obx(() {
             return TabBarView(
               children: [
-                ProgressTarget(controller, controller.listaTargets.value),
-                ConcludedTarget(controller, controller.listaTargets.value),
+                ProgressTarget(controller),
+                ConcludedTarget(controller),
               ],
             );
           }),

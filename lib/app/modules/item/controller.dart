@@ -36,6 +36,8 @@ class ItemController extends GetxController {
     try {
       var valor = currencyToDouble(valorController.text);
 
+      print("imagem envio: ${image.value.substring(0, 50)}");
+
       var target = TargetRequestModel(
         descricao: descricaoController.text,
         valor: valor,
@@ -80,6 +82,7 @@ class ItemController extends GetxController {
 
     try {
       image.value = await _repository.getImagem(id);
+      print("imagem get: ${image.value.substring(0, 50)}");
       processado.value = true;
     } catch (e) {
       printd("erro ao buscar a imagem: $e");
