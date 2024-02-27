@@ -27,7 +27,7 @@ Widget returnImageFromString(String? source, double width, Widget empty, {int? t
 
   if (source != null && source.contains("http")) {
     image = FutureBuilder<Uint8List> (
-      future: RemoveBackground.removebg(source),
+      future: RemoveBackground.resizeFileFromWeb(source),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const SizedBox(height: 60, width: 60, child: CircularProgressIndicator(),);
@@ -43,8 +43,17 @@ Widget returnImageFromString(String? source, double width, Widget empty, {int? t
         } else {
           if (targetId != null) {
             Api api = Get.find<Api>();
-            String image64 = base64Encode(snapshot.data!);
+            final baseEncoder = base64.encoder;
+            String image64 = baseEncoder.convert(snapshot.data!);
             api.editarImage(targetId, image64);
+            return Image.memory(
+              base64Decode(image64),
+              width: width,
+              height: width,
+              errorBuilder: (context, exception, stacktrace) {
+                return empty;
+              },
+            );
           }
           return Image.memory(snapshot.data!);
         }

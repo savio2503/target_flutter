@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:http/http.dart' as http;
+import 'package:image/image.dart' as Img;
 
 class RemoveBackground {
 
@@ -8,7 +9,7 @@ class RemoveBackground {
 
   static final _baseUrl = Uri.parse("https://api.remove.bg/v1.0/removebg");
 
-  static Future<List<int>?> _fetchImageBytes(String imageUrl) async {
+  static Future<Uint8List?> _fetchImageBytes(String imageUrl) async {
 
     final response = await http.get(Uri.parse(imageUrl));
 
@@ -16,7 +17,52 @@ class RemoveBackground {
       return response.bodyBytes;
     }
   }
+  static Future<Uint8List>? resizeFileFromWeb(String urlImageWeb) async {
 
+    Uint8List? bytesFromImage = await _fetchImageBytes(urlImageWeb);
+
+    if (bytesFromImage == null) {
+      throw "erro ao baixar a imagem";
+    }
+
+    Uint8List? result;
+
+    Img.Image? image = Img.decodeImage(bytesFromImage);
+
+    if (image == null) {
+      throw 'Não foi possivel criar a imagem';
+    }
+
+    var width = image.width;
+    var height = image.height;
+    var aspectRatio = width / height;
+    var maxSide = width > height ? width : height;
+    const max = 300;
+
+    if (maxSide > max) {
+      var newWidth = 0;
+      var newHeight = 0;
+
+      if (width > height) {
+        newWidth = max;
+        newHeight = (max / aspectRatio).toInt();
+      } else {
+        newWidth = (max * aspectRatio).toInt();
+        newHeight = max;
+      }
+
+      var imageResize = Img.copyResize(image, width: newWidth, height: newHeight);
+
+      result = Img.encodePng(imageResize);
+    } else {
+      result = Img.encodePng(image);
+    }
+
+    return result;
+
+  }
+
+  /*  USANDO API WEB
   static Future<Uint8List>? removebg(String urlImageWeb) async {
 
     var req = http.MultipartRequest("POST", _baseUrl);
@@ -41,5 +87,5 @@ class RemoveBackground {
     } else {
       throw "Failed to fetch data";
     }
-  }
+  }*/
 }

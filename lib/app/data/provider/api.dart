@@ -18,8 +18,8 @@ class Api extends GetConnect {
   @override
   void onInit() {
     //httpClient.baseUrl = 'http://100.96.1.2:3333/';
-    //httpClient.baseUrl = 'http://192.168.1.11:3333/';
-    httpClient.baseUrl = 'http://192.168.0.192:3333/';
+    httpClient.baseUrl = 'http://192.168.1.11:3333/';
+    //httpClient.baseUrl = 'http://192.168.0.192:3333/';
     //httpClient.baseUrl = 'http://192.168.1.22:3333/';
 
     httpClient.addRequestModifier((Request request) {
@@ -184,12 +184,12 @@ class Api extends GetConnect {
   
   Future<void> editarImage(int targetId, String image) async {
 
-    String request = '{"targetid":"$targetId","image":"$image"}';
+    String request = '{"targetId":"$targetId","image":"$image"}';
 
     print('editar a imagem para o ojetivo ${request.substring(0, 100)}');
 
     try {
-      _errorHandler(await post('/image', request, headers: getHeaders()));
+      _errorHandler(await put('image', request, headers: getHeaders()));
     } catch (error) {
       print('erro ao atualizar a imagem: $error');
     }
