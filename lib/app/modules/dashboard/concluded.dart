@@ -19,23 +19,12 @@ class ConcludedTarget extends StatefulWidget {
 }
 
 class _ConcludedTargetState extends State<ConcludedTarget> {
-  List<TargetModel> targetsConcluidos = [];
   final _authService = Get.find<AuthService>();
 
   @override
   Widget build(BuildContext context) {
-    final List<TargetModel> targets = widget.controller.listaTargets.value;
     final double width = MediaQuery.of(context).size.width - 82;
-    //final double width_grid = (MediaQuery.of(context).size.width / 2) - 41;
 
-    targetsConcluidos.clear();
-
-    for (var target in targets) {
-      if (!target.ativo) {
-        //printd("Adicionando nos concluidos: $target");
-        targetsConcluidos.add(target);
-      }
-    }
     if (widget.controller.loading.value) {
       return const Column(
         children: [
@@ -55,7 +44,7 @@ class _ConcludedTargetState extends State<ConcludedTarget> {
       );
     }
 
-    if (targetsConcluidos.isEmpty) {
+    if (widget.controller.completeTargets.isEmpty) {
       return const Align(
         alignment: Alignment.center,
         child: Text("Você não possui objetivos concluidos!"),
@@ -65,7 +54,8 @@ class _ConcludedTargetState extends State<ConcludedTarget> {
       children: [
         Container(
           padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: Text("Total Investido: ${NumberFormat.simpleCurrency().format(widget.controller.sumOfCompleted.value)}"),
+          child: Text(
+              "Total Investido: ${NumberFormat.simpleCurrency().format(widget.controller.sumOfCompleted.value)}"),
         ),
         Expanded(
           child: GridView.count(
@@ -74,11 +64,12 @@ class _ConcludedTargetState extends State<ConcludedTarget> {
             crossAxisSpacing: 10,
             mainAxisSpacing: 10,
             crossAxisCount: 2,
-            children: List.generate(targetsConcluidos.length, (index) {
+            children: List.generate(widget.controller.completeTargets.length,
+                (index) {
               return GestureDetector(
                 onTap: () async {
                   Map<String, dynamic> arg = {
-                    "target": targetsConcluidos[index]
+                    "target": widget.controller.completeTargets[index]
                   };
                   var edit = await Get.toNamed(
                     Routes.item,
@@ -95,7 +86,7 @@ class _ConcludedTargetState extends State<ConcludedTarget> {
                       AspectRatio(
                         aspectRatio: 18.0 / 11.0,
                         child: returnImageFromString(
-                          targetsConcluidos[index].imagem,
+                          widget.controller.completeTargets[index].imagem,
                           width,
                           const Icon(
                             Icons.local_mall,
@@ -110,10 +101,10 @@ class _ConcludedTargetState extends State<ConcludedTarget> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Text(
-                              "${targetsConcluidos[index].posicao} - ${targetsConcluidos[index].descricao}",
+                              "${widget.controller.completeTargets[index].posicao} - ${widget.controller.completeTargets[index].descricao}",
                               overflow: TextOverflow.ellipsis,
                             ),
-                            fittedBox(targetsConcluidos[index]),
+                            fittedBox(widget.controller.completeTargets[index]),
                           ],
                         ),
                       ),

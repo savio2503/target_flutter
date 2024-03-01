@@ -18,8 +18,8 @@ class Api extends GetConnect {
   @override
   void onInit() {
     //httpClient.baseUrl = 'http://100.96.1.2:3333/';
-    httpClient.baseUrl = 'http://192.168.1.11:3333/';
-    //httpClient.baseUrl = 'http://192.168.0.192:3333/';
+    //httpClient.baseUrl = 'http://192.168.1.11:3333/';
+    httpClient.baseUrl = 'http://192.168.0.192:3333/';
     //httpClient.baseUrl = 'http://192.168.1.22:3333/';
 
     httpClient.addRequestModifier((Request request) {
@@ -175,7 +175,7 @@ class Api extends GetConnect {
   }
 
   Future<void> editarTarget(TargetRequestModel target) async {
-    printd('chamando o editar target, body: ${jsonEncode(target)}');
+    //printd('chamando o editar target, body: ${jsonEncode(target)}');
 
     _errorHandler(await put('target/${target.id}', jsonEncode(target), headers: getHeaders()));
 

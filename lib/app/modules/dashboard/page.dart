@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:target/app/data/models/target.dart';
 import 'package:target/app/modules/dashboard/commum.dart';
 import 'package:target/app/modules/dashboard/concluded.dart';
 import 'package:target/app/modules/dashboard/progress.dart';
@@ -70,6 +71,9 @@ class DashboardPage extends GetView<DashboardController> {
           ),
           floatingActionButton: Obx(() => btnDeposit(controller)),
           body: Obx(() {
+
+            print("call page dashboard");
+
             return TabBarView(
               children: [
                 ProgressTarget(controller),

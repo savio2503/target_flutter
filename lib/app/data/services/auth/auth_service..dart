@@ -27,7 +27,7 @@ class AuthService extends GetxService {
     await _storageService.saveToken("token");
     await getUser();
 
-    printd("user logado: ${user.value != null ? user.value.toString() : "nulo"}");
+    printd("1: user logado: ${user.value != null ? user.value.toString() : "nulo"}");
     //printd("out login service");
   }
 
@@ -36,7 +36,7 @@ class AuthService extends GetxService {
       await _repository.getUser().then((value) => user.value = value,
           onError: (error) => user.value = null);
     }
-    printd("user logado: ${user.value != null ? user.value.toString() : "nulo"}");
+    printd("2: user logado: ${user.value != null ? user.value.toString() : "nulo"}");
   }
 
   Future<void> logout() async {

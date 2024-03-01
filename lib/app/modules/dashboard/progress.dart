@@ -19,20 +19,20 @@ class ProgressTarget extends StatefulWidget {
 }
 
 class _ProgressTargetState extends State<ProgressTarget> {
-  List<TargetModel> targetsProgress = [];
-  final _authService = Get.find<AuthService>();
-
   @override
   Widget build(BuildContext context) {
-    final List<TargetModel> targets = widget.controller.listaTargets.value;
     final double widthScreen = MediaQuery.of(context).size.width - 82;
-    targetsProgress.clear();
+    final _authService = Get.find<AuthService>();
 
-    for (var target in targets) {
-      if (target.ativo) {
-        //printd("Adicionando nos progressos: $target");
-        targetsProgress.add(target);
-      }
+    print(
+        "progress: quant: ${widget.controller.progressTargets.length}, isLoading: ${widget.controller.loading.value}" +
+            ", isLogged: ${_authService.isLogged}");
+
+    if (!_authService.isLogged) {
+      return const Align(
+        alignment: Alignment.center,
+        child: Text("Por Favor, realizar login"),
+      );
     }
 
     if (widget.controller.loading.value) {
@@ -47,17 +47,10 @@ class _ProgressTargetState extends State<ProgressTarget> {
       );
     }
 
-    if (!_authService.isLogged) {
+    if (widget.controller.progressTargets.isEmpty) {
       return const Align(
         alignment: Alignment.center,
-        child: Text("Por Favor, realizar login"),
-      );
-    }
-
-    if (targetsProgress.isEmpty) {
-      return const Align(
-        alignment: Alignment.center,
-        child: Text("Você não possui objetivos concluidos!"),
+        child: Text("Você não possui objetivos!"),
       );
     }
     return Column(
@@ -74,10 +67,13 @@ class _ProgressTargetState extends State<ProgressTarget> {
             crossAxisSpacing: 10,
             mainAxisSpacing: 10,
             crossAxisCount: 2,
-            children: List.generate(targetsProgress.length, (index) {
+            children: List.generate(widget.controller.progressTargets.length,
+                (index) {
               return GestureDetector(
                 onTap: () async {
-                  Map<String, dynamic> arg = {"target": targetsProgress[index]};
+                  Map<String, dynamic> arg = {
+                    "target": widget.controller.progressTargets[index]
+                  };
                   var edit = await Get.toNamed(
                     Routes.item,
                     arguments: arg,
@@ -95,14 +91,14 @@ class _ProgressTargetState extends State<ProgressTarget> {
                           height: (widthScreen / 2) - 45,
                           width: (widthScreen / 2),
                           child: returnImageFromString(
-                            targetsProgress[index].imagem,
-                            widthScreen,
-                            const Icon(
-                              Icons.local_mall,
-                              size: 50,
-                            ),
-                            targetId: targetsProgress[index].id
-                          ),
+                              widget.controller.progressTargets[index].imagem,
+                              widthScreen,
+                              const Icon(
+                                Icons.local_mall,
+                                size: 50,
+                              ),
+                              targetId:
+                                  widget.controller.progressTargets[index].id),
                         ),
                       ),
                       /*AspectRatio(
@@ -123,10 +119,10 @@ class _ProgressTargetState extends State<ProgressTarget> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Text(
-                              "${targetsProgress[index].posicao} - ${targetsProgress[index].descricao}",
+                              "${widget.controller.progressTargets[index].posicao} - ${widget.controller.progressTargets[index].descricao}",
                               overflow: TextOverflow.ellipsis,
                             ),
-                            fittedBox(targetsProgress[index]),
+                            fittedBox(widget.controller.progressTargets[index]),
                           ],
                         ),
                       ),

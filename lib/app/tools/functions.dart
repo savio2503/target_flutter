@@ -25,6 +25,8 @@ double currencyToDouble(String currency, {String symbol = 'R\$'}) {
 Widget returnImageFromString(String? source, double width, Widget empty, {int? targetId}) {
   Widget? image;
 
+  //print("returnImageFromString(${targetId ?? -1} -> ${source != null ? source.substring(0,50) : "null"})");
+
   if (source != null && source.contains("http")) {
     image = FutureBuilder<Uint8List> (
       future: RemoveBackground.resizeFileFromWeb(source),

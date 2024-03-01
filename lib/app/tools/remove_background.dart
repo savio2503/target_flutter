@@ -20,18 +20,19 @@ class RemoveBackground {
   static Future<Uint8List>? resizeFileFromWeb(String urlImageWeb) async {
 
     Uint8List? bytesFromImage = await _fetchImageBytes(urlImageWeb);
-
+    print("resizeFileFromWeb 1");
     if (bytesFromImage == null) {
       throw "erro ao baixar a imagem";
     }
-
+    print("resizeFileFromWeb 2");
     Uint8List? result;
 
     Img.Image? image = Img.decodeImage(bytesFromImage);
-
+    print("resizeFileFromWeb 3");
     if (image == null) {
       throw 'Não foi possivel criar a imagem';
     }
+    print("resizeFileFromWeb 4");
 
     var width = image.width;
     var height = image.height;
@@ -39,6 +40,7 @@ class RemoveBackground {
     var maxSide = width > height ? width : height;
     const max = 300;
 
+    print("resizeFileFromWeb 5");
     if (maxSide > max) {
       var newWidth = 0;
       var newHeight = 0;
@@ -54,10 +56,13 @@ class RemoveBackground {
       var imageResize = Img.copyResize(image, width: newWidth, height: newHeight);
 
       result = Img.encodePng(imageResize);
+      print("resizeFileFromWeb 6");
     } else {
       result = Img.encodePng(image);
+      print("resizeFileFromWeb 7");
     }
 
+    print("resizeFileFromWeb 8");
     return result;
 
   }

@@ -34,7 +34,7 @@ class ItemPage extends GetView<ItemController> {
     controller.setPeso(target.posicao);
     controller.setImage(target.imagem ?? " ");
 
-    print("imagem parametro: ${target.imagem?.substring(0, 50)}");
+    //print("imagem parametro: ${target.imagem?.substring(0, 50)}");
 
     id = target.id;
 
