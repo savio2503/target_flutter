@@ -17,9 +17,7 @@ class Api extends GetConnect {
 
   @override
   void onInit() {
-    //httpClient.baseUrl = 'http://100.96.1.2:3333/';
-    //httpClient.baseUrl = 'http://192.168.1.11:3333/';
-    httpClient.baseUrl = 'http://192.168.0.192:3333/';
+    httpClient.baseUrl = 'http://192.168.1.151:3333/';
     //httpClient.baseUrl = 'http://192.168.1.22:3333/';
 
     httpClient.addRequestModifier((Request request) {
@@ -36,8 +34,6 @@ class Api extends GetConnect {
 
       var authorization = {'Authorization': 'Bearer $token'};
       var cookie = {'Cookie': '$session'};
-
-      //printd("token: $token");
 
       request.headers.addAll(authorization);
       request.headers.addAll(cookie);
@@ -79,13 +75,9 @@ class Api extends GetConnect {
 
     List<TargetModel> targets = [];
 
-    //printd("retorno getTargets($ativo) = ${response.body}");
-
     for (var target in response.body) {
       targets.add(TargetModel.fromJson(target));
     }
-
-    //sleep(const Duration(seconds: 2));
 
     return targets;
   }
@@ -97,13 +89,13 @@ class Api extends GetConnect {
   }
 
   Future<List<DeposityModel>> getAllDeposity(int targetId) async {
-    //printd("allDeposity($targetId)");
+    
     var response = _errorHandler(await get('deposit/$targetId', headers: getHeaders()));
-    //printd("response: allDeposity(${response.bodyString})");
+    
     List<DeposityModel> deposits = [];
 
     for (var row in response.body) {
-      //printd('add: $row');
+      
       var aux = DeposityModel.fromJson(row);
       if (aux.valor != 0) {
         deposits.add(aux);
@@ -130,12 +122,6 @@ class Api extends GetConnect {
       response.headers!.forEach((key, value) {
         if (key == HttpHeaders.setCookieHeader) {
           String cookie = "";
-
-          /*RegExp regex = RegExp(r"adonis-session=([^;]+)");
-        Match? match = regex.firstMatch(value);
-        if (match != null) {
-          cookie = match.group(1) ?? "";
-        }*/
 
           RegExp regex = RegExp(r"SameSite=([^;]+),([^;]+)");
           Iterable<Match> matches = regex.allMatches(value);
@@ -190,15 +176,14 @@ class Api extends GetConnect {
 
     _errorHandler(await post('target', jsonEncode(target), headers: getHeaders()));
 
-    return; //TargetModel.fromJson(response.body);
+    return;
   }
 
   Future<void> editarTarget(TargetRequestModel target) async {
-    //printd('chamando o editar target, body: ${jsonEncode(target)}');
 
     _errorHandler(await put('target/${target.id}', jsonEncode(target), headers: getHeaders()));
 
-    return; //TargetModel.fromJson(response.body);
+    return;
   }
   
   Future<void> editarImage(int targetId, String image) async {

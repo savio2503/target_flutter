@@ -1,26 +1,23 @@
 class DeposityModel {
   int id;
-  int targetId;
   num valor;
   String createAt;
 
   DeposityModel({
     required this.id,
-    required this.targetId,
     required this.valor,
     required this.createAt,
   });
 
   factory DeposityModel.fromJson(Map<String, dynamic> json) => DeposityModel(
-        id: json['id'],
-        targetId: json['targetId'],
+        id: 1,
         valor: json['valor'],
-        createAt: json['createdAt'].toString().substring(0, 19).replaceAll('T', ' '),
+        createAt: json['mes'],
       );
 
       @override
   String toString() {
     
-    return "{id: $id, targetId: $targetId, valor: $valor, create: $createAt}"; 
+    return "{id: $id, valor: $valor, create: $createAt}"; 
   }
 }
