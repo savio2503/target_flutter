@@ -14,6 +14,7 @@ class LoginController extends GetxController {
   var repassController = TextEditingController();
   var statenum = 0.obs;
   var statestr = "Login".obs;
+  var error = "".obs;
 
   LoginController() {
     printd("token: ${_storageService.token}");
@@ -46,20 +47,29 @@ class LoginController extends GetxController {
 
   void _setStateStr(String value) => statestr.value = value;
 
-  void login() async {
+  Future<bool> login() async {
+
+    var result = false;
+
     //printd("in login controller");
     var userLoginRequestMode = UserLoginRequestModel(
       email: emailController.text,
       password: passwordController.text,
     );
 
-    await _authService.login(userLoginRequestMode).then((value) => null);
+    try {
+      await _authService.login(userLoginRequestMode);
+    } catch (e) {
+      error.value = e.toString();
+    }
 
     //printd("out login controller");
     if (_authService.isLogged) {
       await Get.find<CoinService>().getCoins();
       Get.back();
     }
+
+    return result;
   }
 
   void logout() async {

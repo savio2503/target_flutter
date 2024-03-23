@@ -121,36 +121,55 @@ class Api extends GetConnect {
 
   Future<void> login(UserLoginRequestModel data) async {
     printd("chamando o login, body: ${jsonEncode(data)}");
-    var response = _errorHandler(await post('login', jsonEncode(data)));
-    printd("retorno login");
+    String erro = "";
+    try {
+      var response = _errorHandler(await post('login', jsonEncode(data)));
+      printd("retorno login");
 
-    //pegando o cookie na resposta
-    response.headers!.forEach((key, value) {
-      if (key == HttpHeaders.setCookieHeader) {
-        String cookie = "";
-        
-        /*RegExp regex = RegExp(r"adonis-session=([^;]+)");
+      //pegando o cookie na resposta
+      response.headers!.forEach((key, value) {
+        if (key == HttpHeaders.setCookieHeader) {
+          String cookie = "";
+
+          /*RegExp regex = RegExp(r"adonis-session=([^;]+)");
         Match? match = regex.firstMatch(value);
         if (match != null) {
           cookie = match.group(1) ?? "";
         }*/
 
-        RegExp regex = RegExp(r"SameSite=([^;]+),([^;]+)");
-        Iterable<Match> matches = regex.allMatches(value);
-        List<String> values = [];
+          RegExp regex = RegExp(r"SameSite=([^;]+),([^;]+)");
+          Iterable<Match> matches = regex.allMatches(value);
+          List<String> values = [];
 
-        matches.forEach((element) {
-          String? value = element.group(2);
-          if (value != null && value.isNotEmpty) {
-            values.add(value);
-          }
-        });
+          matches.forEach((element) {
+            String? value = element.group(2);
+            if (value != null && value.isNotEmpty) {
+              values.add(value);
+            }
+          });
 
-        cookie = values.join('; ');
+          cookie = values.join('; ');
 
-        _storageService.saveSession(cookie);
+          _storageService.saveSession(cookie);
+        }
+      });
+    } catch (e) {
+      RegExp regex = RegExp('"message":"(.*?)"');
+      Iterable<Match> matches = regex.allMatches(e.toString());
+
+      matches.forEach((element) {
+        String? value = element.group(1);
+        if (value != null && value.isNotEmpty) {
+          erro = value;
+        }
+      });
+
+      if (erro.isEmpty) {
+        erro = e.toString();
       }
-    });
+    }
+
+    throw erro;
   }
 
   Future<UserModel> getUser() async {
@@ -241,7 +260,7 @@ class Api extends GetConnect {
         } else if (errorMessage.contains("Invalid credentials")) {
           throw 'Login ou senha incorreta(s), por favor tente novamente';
         } else {
-          throw 'Ocorreu um erro';
+          throw errorMessage;
         }
     }
   }

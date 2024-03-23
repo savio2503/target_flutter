@@ -8,8 +8,8 @@ class AuthRepository {
   AuthRepository(this._api);
 
   Future<void> login(
-          UserLoginRequestModel userLoginRequestModel) =>
-      _api.login(userLoginRequestModel);
+          UserLoginRequestModel userLoginRequestModel) async =>
+      await _api.login(userLoginRequestModel);
 
   Future<UserModel> getUser() => _api.getUser();
 }
