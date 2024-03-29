@@ -356,42 +356,65 @@ class ItemPage extends GetView<ItemController> {
     final double width = (MediaQuery.of(context).size.width - 40) * 0.75;
 
     Widget? image = returnImageFromString(
-      controller.image.value,
-      width,
-      addImage(context),
-      controller
-    );
+        controller.image.value, width, addImage(context), controller);
 
     //printd("size: $width, widget: ${image?.runtimeType}");
 
-    return Padding(
-      padding: const EdgeInsets.only(left: 15, top: 15),
-      child: GestureDetector(
-        onLongPress: () async {
-          await dialogGetImage(context);
-        },
-        child: Column(
-          children: [
-            image,
-            Row(
-              children: [
-                const Spacer(),
-                ElevatedButton(
-                  style: ButtonStyle(
-                    foregroundColor:
-                        MaterialStateProperty.all<Color>(Colors.blue),
+    if (controller.visibleRemove.value) {
+      return Padding(
+        padding: const EdgeInsets.only(left: 15, top: 15),
+        child: GestureDetector(
+          onLongPress: () async {
+            await dialogGetImage(context);
+          },
+          child: Column(
+            children: [
+              image,
+              Row(
+                children: [
+                  const Spacer(),
+                  ElevatedButton(
+                    style: ButtonStyle(
+                      foregroundColor:
+                          MaterialStateProperty.all<Color>(Colors.blue),
+                    ),
+                    onPressed: () async {
+                      print("apertou");
+
+                      controller.txtRemove.value = "Carregando....";
+
+                      String source = controller.imageBase64.isEmpty
+                          ? controller.image.value
+                          : controller.imageBase64;
+
+                      String result =
+                          await returnImageWithoutBackground(source);
+
+                      if (source.compareTo(result) != 0) {
+                        controller.visibleRemove.value = false;
+                      }
+                      controller.setImage(result);
+                      controller.txtRemove.value = "Remover background";
+                    },
+                    child: Text(controller.txtRemove.value),
                   ),
-                  onPressed: () async {
-                    print("apertou");
-                  },
-                  child: const Text('Remover background'),
-                ),
-              ],
-            )
-          ],
+                ],
+              )
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    } else {
+      return Padding(
+        padding: const EdgeInsets.only(left: 15, top: 15),
+        child: GestureDetector(
+          onLongPress: () async {
+            await dialogGetImage(context);
+          },
+          child: image,
+        ),
+      );
+    }
   }
 
   Widget getHistoric(ItemController controller, double distancia, int id) {

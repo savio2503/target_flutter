@@ -18,6 +18,8 @@ class ItemController extends GetxController implements ImageCallback {
   var selectCoin = "".obs;
   var coinId = 1.obs;
   var imageBase64 = "";
+  var txtRemove = "Remover background".obs;
+  var visibleRemove = true.obs;
 
   ItemController(this._repository);
 

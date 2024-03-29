@@ -18,6 +18,25 @@ double currencyToDouble(String currency, {String symbol = 'R\$'}) {
   return double.parse(clear);
 }
 
+Future<String> returnImageWithoutBackground(String source) async {
+  Uint8List? convertido;
+
+  try {
+    convertido = await RemoveBackground.remove(source);
+  } catch (e) {
+    printd("$e");
+  }
+
+  if (convertido == null) {
+    return source;
+  }
+
+  final baseEncoder = base64.encoder;
+  String image64 = baseEncoder.convert(convertido);
+
+  return image64;
+}
+
 Widget returnImageFromString(
     String? source, double width, Widget empty, ImageCallback? callback) {
   Widget? image;
