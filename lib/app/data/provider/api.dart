@@ -153,9 +153,9 @@ class Api extends GetConnect {
       if (erro.isEmpty) {
         erro = e.toString();
       }
-    }
 
-    throw erro;
+      throw erro;
+    }
   }
 
   Future<UserModel> getUser() async {

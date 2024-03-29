@@ -369,7 +369,26 @@ class ItemPage extends GetView<ItemController> {
         onLongPress: () async {
           await dialogGetImage(context);
         },
-        child: image,
+        child: Column(
+          children: [
+            image,
+            Row(
+              children: [
+                const Spacer(),
+                ElevatedButton(
+                  style: ButtonStyle(
+                    foregroundColor:
+                        MaterialStateProperty.all<Color>(Colors.blue),
+                  ),
+                  onPressed: () async {
+                    print("apertou");
+                  },
+                  child: const Text('Remover background'),
+                ),
+              ],
+            )
+          ],
+        ),
       ),
     );
   }
