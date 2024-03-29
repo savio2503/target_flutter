@@ -89,7 +89,8 @@ class DashboardPage extends GetView<DashboardController> {
   Widget bodyDashboard(BuildContext context, bool inProgress) {
     final double widthScreen = MediaQuery.of(context).size.width - 82;
     final authService = Get.find<AuthService>();
-    final listaTarget = inProgress ? controller.progressTargets : controller.completeTargets;
+    final listaTarget =
+        inProgress ? controller.progressTargets : controller.completeTargets;
 
     printd(
         "inProgress: $inProgress, quant: ${listaTarget.length}, isLoading: ${controller.loading.value}" +
@@ -117,7 +118,9 @@ class DashboardPage extends GetView<DashboardController> {
     if (listaTarget.isEmpty) {
       return Align(
         alignment: Alignment.center,
-        child: Text(inProgress ? "Você não possui objetivos!" : "Você não possui objetivos concluidos!"),
+        child: Text(inProgress
+            ? "Você não possui objetivos!"
+            : "Você não possui objetivos concluidos!"),
       );
     }
 
@@ -140,9 +143,7 @@ class DashboardPage extends GetView<DashboardController> {
               (index) {
                 return GestureDetector(
                   onTap: () async {
-                    Map<String, dynamic> arg = {
-                      "target": listaTarget[index]
-                    };
+                    Map<String, dynamic> arg = {"target": listaTarget[index]};
                     var edit = await Get.toNamed(
                       Routes.item,
                       arguments: arg,
@@ -160,13 +161,14 @@ class DashboardPage extends GetView<DashboardController> {
                             height: (widthScreen / 2) - 45,
                             width: (widthScreen / 2),
                             child: returnImageFromString(
-                                listaTarget[index].imagem,
-                                widthScreen,
-                                const Icon(
-                                  Icons.local_mall,
-                                  size: 50,
-                                ),
-                                targetId: listaTarget[index].id),
+                              listaTarget[index].imagem,
+                              widthScreen,
+                              const Icon(
+                                Icons.local_mall,
+                                size: 50,
+                              ),
+                              null,
+                            ),
                           ),
                         ),
                         Padding(

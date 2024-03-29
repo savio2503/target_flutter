@@ -1,12 +1,8 @@
 import 'dart:convert';
-import 'dart:io';
-import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:image/image.dart' as img;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:target/app/data/provider/api.dart';
+import 'package:target/app/core/image_callback.dart';
 import 'package:target/app/tools/remove_background.dart';
 
 printd(String? msg) {
@@ -22,17 +18,20 @@ double currencyToDouble(String currency, {String symbol = 'R\$'}) {
   return double.parse(clear);
 }
 
-Widget returnImageFromString(String? source, double width, Widget empty, {int? targetId}) {
+Widget returnImageFromString(
+    String? source, double width, Widget empty, ImageCallback? callback) {
   Widget? image;
 
-  //print("returnImageFromString(${targetId ?? -1} -> ${source != null ? source.substring(0,50) : "null"})");
-
   if (source != null && source.contains("http")) {
-    image = FutureBuilder<Uint8List> (
+    image = FutureBuilder<Uint8List>(
       future: RemoveBackground.resizeFileFromWeb(source),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const SizedBox(height: 60, width: 60, child: CircularProgressIndicator(),);
+          return const SizedBox(
+            height: 60,
+            width: 60,
+            child: CircularProgressIndicator(),
+          );
         } else if (snapshot.hasError) {
           return Image.network(
             source,
@@ -43,21 +42,21 @@ Widget returnImageFromString(String? source, double width, Widget empty, {int? t
             },
           );
         } else {
-          if (targetId != null) {
-            Api api = Get.find<Api>();
-            final baseEncoder = base64.encoder;
-            String image64 = baseEncoder.convert(snapshot.data!);
-            api.editarImage(targetId, image64);
-            return Image.memory(
-              base64Decode(image64),
-              width: width,
-              height: width,
-              errorBuilder: (context, exception, stacktrace) {
-                return empty;
-              },
-            );
+          final baseEncoder = base64.encoder;
+          String image64 = baseEncoder.convert(snapshot.data!);
+
+          if (callback != null) {
+            callback.onImageReceived(image64);
           }
-          return Image.memory(snapshot.data!);
+
+          return Image.memory(
+            base64Decode(image64),
+            width: width,
+            height: width,
+            errorBuilder: (context, exception, stacktrace) {
+              return empty;
+            },
+          );
         }
       },
     );

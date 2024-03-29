@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:target/app/core/image_callback.dart';
 import 'package:target/app/data/models/target_request.dart';
 import 'package:target/app/modules/add/repository.dart';
 import 'package:target/app/tools/functions.dart';
 
-class AddController extends GetxController {
+class AddController extends GetxController implements ImageCallback {
   final AddRepository _repository;
 
   var descricaoController = TextEditingController();
@@ -15,6 +16,7 @@ class AddController extends GetxController {
   var image = " ".obs;
   var selectCoin = "".obs;
   var coinId = 1.obs;
+  var imageBase64 = "";
 
   AddController(this._repository);
 
@@ -26,7 +28,8 @@ class AddController extends GetxController {
 
   void setImage(String value) => image.value = value;
 
-  void setValor(double value) => valorController.text = NumberFormat.simpleCurrency().format(value);
+  void setValor(double value) =>
+      valorController.text = NumberFormat.simpleCurrency().format(value);
 
   void check(String aux) {
     String descricao = descricaoController.text;
@@ -34,8 +37,7 @@ class AddController extends GetxController {
 
     //printd("d: '$descricao', v: '$valor'");
 
-    if (descricao.isEmpty ||
-        (valor.isEmpty || valor.contains(" 0,00"))) {
+    if (descricao.isEmpty || (valor.isEmpty || valor.contains(" 0,00"))) {
       enable.value = false;
       //printd("false");
       return;
@@ -54,7 +56,7 @@ class AddController extends GetxController {
         descricao: descricaoController.text,
         valor: valor,
         posicao: peso.value,
-        imagem: image.value,
+        imagem: imageBase64.isEmpty ? image.value : imageBase64,
         coin: coinId.value,
       );
 
@@ -67,4 +69,9 @@ class AddController extends GetxController {
   }
 
   void setPeso(dynamic value) => peso.value = value.toInt();
+
+  @override
+  void onImageReceived(String base64Image) {
+    imageBase64 = base64Image;
+  }
 }

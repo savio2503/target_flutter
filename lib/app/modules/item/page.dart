@@ -359,6 +359,7 @@ class ItemPage extends GetView<ItemController> {
       controller.image.value,
       width,
       addImage(context),
+      controller
     );
 
     //printd("size: $width, widget: ${image?.runtimeType}");

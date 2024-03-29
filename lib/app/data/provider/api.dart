@@ -17,8 +17,8 @@ class Api extends GetConnect {
 
   @override
   void onInit() {
-    httpClient.baseUrl = 'http://192.168.1.151:3333/';
-    //httpClient.baseUrl = 'http://192.168.1.22:3333/';
+    //httpClient.baseUrl = 'http://192.168.1.151:3333/';
+    httpClient.baseUrl = 'http://192.168.1.4:3333/';
 
     httpClient.addRequestModifier((Request request) {
       request.headers['Accept'] = 'application/json';

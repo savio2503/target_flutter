@@ -223,6 +223,7 @@ class AddPage extends GetView<AddController> {
       controller.image.value,
       width,
       addImage(controller, context),
+      controller
     );
 
     //printd("size: $width, widget: ${image?.runtimeType}");

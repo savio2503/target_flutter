@@ -1,12 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:target/app/core/image_callback.dart';
 import 'package:target/app/data/models/deposit.dart';
 import 'package:target/app/data/models/target_request.dart';
 import 'package:target/app/modules/item/repository.dart';
 import 'package:target/app/tools/functions.dart';
 
-class ItemController extends GetxController {
+class ItemController extends GetxController implements ImageCallback {
   final ItemRepository _repository;
 
   var descricaoController = TextEditingController();
@@ -16,6 +17,7 @@ class ItemController extends GetxController {
   var processado = false.obs;
   var selectCoin = "".obs;
   var coinId = 1.obs;
+  var imageBase64 = "";
 
   ItemController(this._repository);
 
@@ -27,12 +29,15 @@ class ItemController extends GetxController {
 
   void setDescricao(String value) => descricaoController.text = value;
 
-  void setValor(double value) => valorController.text = NumberFormat.simpleCurrency(name: '', decimalDigits: 2,).format(value);
+  void setValor(double value) =>
+      valorController.text = NumberFormat.simpleCurrency(
+        name: '',
+        decimalDigits: 2,
+      ).format(value);
 
   void setPeso(dynamic value) => peso.value = value.toInt();
 
   send(int id) async {
-
     try {
       var valor = currencyToDouble(valorController.text);
 
@@ -42,7 +47,7 @@ class ItemController extends GetxController {
         descricao: descricaoController.text,
         valor: valor,
         posicao: peso.value,
-        imagem: image.value,
+        imagem: imageBase64.isEmpty ? image.value : imageBase64,
         coin: coinId.value,
       );
 
@@ -87,5 +92,10 @@ class ItemController extends GetxController {
     } catch (e) {
       printd("erro ao buscar a imagem: $e");
     }
+  }
+
+  @override
+  void onImageReceived(String base64Image) {
+    imageBase64 = base64Image;
   }
 }
