@@ -17,6 +17,7 @@ class AddController extends GetxController implements ImageCallback {
   var selectCoin = "".obs;
   var coinId = 1.obs;
   var imageBase64 = "";
+  var visibleRemove = true.obs;
 
   AddController(this._repository);
 
@@ -58,6 +59,7 @@ class AddController extends GetxController implements ImageCallback {
         posicao: peso.value,
         imagem: imageBase64.isEmpty ? image.value : imageBase64,
         coin: coinId.value,
+        removebackground: visibleRemove.value ? 0 : 1,
       );
 
       await _repository.addTarget(target);

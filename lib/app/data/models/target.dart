@@ -8,6 +8,7 @@ class TargetModel {
   num porcetagem;
   String? imagem;
   num coin;
+  num removebackground;
 
   TargetModel({
     required this.id,
@@ -19,6 +20,7 @@ class TargetModel {
     this.porcetagem = 0,
     this.imagem,
     required this.coin,
+    required this.removebackground,
   });
 
   factory TargetModel.fromJson(Map<String, dynamic> json) => TargetModel(
@@ -31,10 +33,11 @@ class TargetModel {
         coin: json['coin'],
         valorAtual: json['total'] ?? 0.00,
         porcetagem: json['porcetagem'],
+        removebackground: json['removebackground'],
       );
 
   @override
   String toString() {
-    return 'Target={id:$id, descricao:$descricao, valor:$valor, posicao:$posicao, ativo:$ativo, valorAtual:$valorAtual, porcetagem:$porcetagem, imagem:$imagem, coin:$coin}';
+    return 'Target={id:$id, descricao:$descricao, valor:$valor, posicao:$posicao, ativo:$ativo, valorAtual:$valorAtual, porcetagem:$porcetagem, imagem:$imagem, coin:$coin, removebackground:$removebackground}';
   }
 }

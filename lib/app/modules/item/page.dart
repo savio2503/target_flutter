@@ -51,6 +51,7 @@ class ItemPage extends GetView<ItemController> {
 
     controller.setCoin(opcoesCoins[coinId]);
     controller.setCoinId(coinId);
+    controller.visibleRemove.value = target.removebackground == 0;
 
     valorDepositado = NumberFormat.simpleCurrency(
             name: coins[(target.coin - 1).toInt()].symbol, decimalDigits: 2)
@@ -393,7 +394,8 @@ class ItemPage extends GetView<ItemController> {
                       if (source.compareTo(result) != 0) {
                         controller.visibleRemove.value = false;
                       }
-                      controller.setImage(result);
+                      controller.image.value = result;
+                      controller.imageBase64 = result;
                       controller.txtRemove.value = "Remover background";
                     },
                     child: Text(controller.txtRemove.value),

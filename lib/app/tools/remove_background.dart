@@ -7,7 +7,8 @@ import 'package:target/app/tools/functions.dart';
 import 'package:http_parser/http_parser.dart';
 
 class RemoveBackground {
-  static final _baseUrl = Uri.parse("http://192.168.1.4:5000/upload");
+  //static final _baseUrl = Uri.parse("http://192.168.1.4:5000/upload");
+  static final _baseUrl = Uri.parse("http://192.168.1.151:5000/upload");
 
   static Future<Uint8List?> _fetchImageBytes(String imageUrl) async {
     final response = await http.get(Uri.parse(imageUrl));
@@ -32,6 +33,19 @@ class RemoveBackground {
       if (response.statusCode == 200) {
         printd("200");
         Uint8List responseBytes = response.bodyBytes;
+
+        //removendo as transparencia
+        Img.Image? image = Img.decodeImage(responseBytes);
+
+        if (image == null) {
+          printd('nao foi possivel remover os espaços em branco');
+          return responseBytes;
+        }
+
+        image = _removeTransparentPixels(image);
+
+        responseBytes = Img.encodePng(image);
+
         return responseBytes;
       } else {
         printd("${response.statusCode}");
@@ -42,6 +56,35 @@ class RemoveBackground {
       printd("Error ao processar: $e");
       throw 'Error ao processar: $e';
     }
+  }
+
+  static Img.Image _removeTransparentPixels(Img.Image image) {
+    int nx = image.width, ny = image.height, right = 0, bottom = 0;
+
+    //printd("width: ${image.width}, height: ${image.height}");
+
+    for (int y = 0; y < image.height; y++) {
+      for (int x = 0; x < image.width; x++) {
+        if (image.getPixel(x, y).a > 100) {
+          if (y < ny) ny = y;
+          if (x < nx) nx = x;
+          if (x > right) right = x;
+          if (y > bottom) bottom = y;
+        } 
+      }
+    }
+
+    //printd("nx: $nx, ny: $ny, r: $right, b: $bottom");
+
+    Img.Image croppedImage = Img.copyCrop(
+      image,
+      x: nx,
+      y: ny,
+      width: right - nx,
+      height: bottom - ny,
+    );
+
+    return croppedImage;
   }
 
   static Future<Uint8List>? resizeFileFromWeb(String urlImageWeb) async {

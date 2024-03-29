@@ -5,6 +5,7 @@ class TargetRequestModel {
   int posicao;
   String imagem;
   int coin;
+  int removebackground;
 
   TargetRequestModel({
     this.id,
@@ -13,6 +14,7 @@ class TargetRequestModel {
     required this.posicao,
     required this.imagem,
     required this.coin,
+    required this.removebackground,
   });
 
   Map<String, dynamic> toJson() => {
@@ -21,5 +23,6 @@ class TargetRequestModel {
         'posicao': posicao,
         'imagem': imagem,
         'coin': coin,
+        'removebackground': removebackground
       };
 }

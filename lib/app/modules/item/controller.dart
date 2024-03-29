@@ -27,7 +27,10 @@ class ItemController extends GetxController implements ImageCallback {
 
   void setCoinId(int value) => coinId.value = (value + 1);
 
-  void setImage(String value) => image.value = value;
+  void setImage(String value) {
+    image.value = value;
+    visibleRemove.value = true;
+  }
 
   void setDescricao(String value) => descricaoController.text = value;
 
@@ -43,14 +46,13 @@ class ItemController extends GetxController implements ImageCallback {
     try {
       var valor = currencyToDouble(valorController.text);
 
-      print("imagem envio: ${image.value.substring(0, 50)}");
-
       var target = TargetRequestModel(
         descricao: descricaoController.text,
         valor: valor,
         posicao: peso.value,
         imagem: imageBase64.isEmpty ? image.value : imageBase64,
         coin: coinId.value,
+        removebackground: visibleRemove.value ? 0 : 1,
       );
 
       target.id = id;
