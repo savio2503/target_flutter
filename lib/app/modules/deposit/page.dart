@@ -11,7 +11,7 @@ class DepositPage extends GetView<DepositController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Depositar ou Remover'),
+        title: const Text('Deposit or Remove'),
         centerTitle: true,
         backgroundColor: Colors.blue,
       ),
@@ -24,7 +24,7 @@ class DepositPage extends GetView<DepositController> {
           children: [
             const SizedBox(height: 60),
             const Text(
-              "Quanto você irá\ndepositar ou remover?",
+              "How much will you\ndeposit or withdraw?",
               style: TextStyle(
                 fontSize: 20,
               ),
@@ -49,7 +49,7 @@ class DepositPage extends GetView<DepositController> {
                 const Spacer(),
                 FancyButton(
                   onClick: () => controller.send(true),
-                  button_text: "Depositar",
+                  button_text: "Deposit",
                   button_height: 40,
                   button_width: 120,
                   button_radius: 50,
@@ -64,7 +64,7 @@ class DepositPage extends GetView<DepositController> {
                 const Spacer(),
                 FancyButton(
                   onClick: () => controller.send(false),
-                  button_text: "Remover",
+                  button_text: "Remove",
                   button_height: 40,
                   button_width: 120,
                   button_radius: 50,
