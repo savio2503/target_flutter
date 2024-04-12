@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
-import 'package:target/app/core/theme/app_theme.dart';
-import 'package:target/app/data/models/target.dart';
+import 'package:target/app/data/services/auth/auth_service..dart';
+import 'package:target/app/modules/dashboard/commum.dart';
 import 'package:target/app/modules/dashboard/controller.dart';
 import 'package:target/app/tools/functions.dart';
 import 'package:target/routes/routes.dart';
@@ -13,162 +12,183 @@ class DashboardPage extends GetView<DashboardController> {
 
   @override
   Widget build(BuildContext context) {
-    final double width = MediaQuery.of(context).size.width - 82;
-    final double width_grid = (MediaQuery.of(context).size.width / 2) - 41;
 
-    //printd("width: $width");
+    return MaterialApp(
+      home: DefaultTabController(
+        length: 2,
+        child: Scaffold(
+          appBar: AppBar(
+            leading: IconButton(
+              onPressed: () async {
+                var created = await Get.toNamed(Routes.add);
 
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          onPressed: () async {
-            var created = await Get.toNamed(Routes.add);
-
-            if (created != null && created)
-              controller.getAllTarget();
-          },
-          icon: const Icon(Icons.add, color: Colors.white,),
-        ),
-        title: const Text('Objetivos', style: TextStyle(color: Colors.white,),),
-        centerTitle: true,
-        backgroundColor: Colors.blue,
-        actions: [
-          IconButton(
-            onPressed: () async {
-              await Get.toNamed(Routes.login);
-
-              controller.getAllTarget();
-            },
-            icon: const Icon(Icons.account_circle, color: Colors.white,),
-          ),
-        ],
-      ),
-      floatingActionButton: Obx(() => btnDeposit(controller)),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      body: Obx(() {
-        if (controller.loading.value) {
-          return const Column(
-            children: [
-              Spacer(),
-              Center(
-                child: Text('carregando'),
+                if (created != null && created) await controller.getAllTarget();
+              },
+              icon: const Icon(
+                Icons.add,
+                color: Colors.white,
               ),
-              Spacer(),
-            ],
-          );
-        }
-        final list = controller.listaTargets.value;
-        if (list.isEmpty) {
-          return const Align(
-            alignment: Alignment.center,
-            child: Text("Não contém objetivos, por favor adicione novos"),
-          );
-        }
-        return Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Text("Total Investido: ${sumTotalList(list)}"),
             ),
-            Expanded(
-              child: GridView.count(
-                primary: false,
-                padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 75.0),
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-                crossAxisCount: 2,
-                children: List.generate(list.length, (index) {
-                  return GestureDetector(
-                    onTap: () async {
-                      Map<String, dynamic> arg = {
-                        "target": list[index]
-                      };
-                      var edit = await Get.toNamed(
-                        Routes.item,
-                        arguments: arg,
-                      );
-                      printd("edit: $edit");
-                      if (edit != null && edit) controller.getAllTarget();
-                    },
-                    child: Card(
-                      clipBehavior: Clip.antiAlias,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          AspectRatio(
-                            aspectRatio: 18.0 / 11.0,
+            title: const Text(
+              'Objetivos',
+              style: TextStyle(
+                color: Colors.white,
+              ),
+            ),
+            centerTitle: true,
+            backgroundColor: Colors.blue,
+            actions: [
+              IconButton(
+                onPressed: () async {
+                  await Get.toNamed(Routes.login);
+
+                  await controller.getAllTarget();
+                },
+                icon: const Icon(
+                  Icons.account_circle,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+            bottom: const TabBar(
+              tabs: [
+                Text(
+                  "EM PROGRESSO",
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+                Text(
+                  "CONCLUIDOS",
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          floatingActionButton: Obx(() => btnDeposit(controller)),
+          body: Obx(() {
+            print("call page dashboard");
+
+            return TabBarView(
+              children: [
+                //ProgressTarget(controller),
+                //ConcludedTarget(controller),
+                bodyDashboard(context, true),
+                bodyDashboard(context, false),
+              ],
+            );
+          }),
+        ),
+      ),
+    );
+  }
+
+  Widget bodyDashboard(BuildContext context, bool inProgress) {
+    final double widthScreen = MediaQuery.of(context).size.width - 82;
+    final authService = Get.find<AuthService>();
+    final listaTarget =
+        inProgress ? controller.progressTargets : controller.completeTargets;
+
+    if (!authService.isLogged) {
+      return const Align(
+        alignment: Alignment.center,
+        child: Text("Por Favor, realizar login"),
+      );
+    }
+
+    if (controller.loading.value) {
+      return const Column(
+        children: [
+          Spacer(),
+          Center(
+            child: Text('carregando'),
+          ),
+          Spacer(),
+        ],
+      );
+    }
+
+    if (listaTarget.isEmpty) {
+      return Align(
+        alignment: Alignment.center,
+        child: Text(inProgress
+            ? "Você não possui objetivos!"
+            : "Você não possui objetivos concluidos!"),
+      );
+    }
+
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Text(
+              "Total Investido: ${NumberFormat.simpleCurrency().format(inProgress ? controller.sumOfAssets.value : controller.sumOfCompleted.value)}"),
+        ),
+        Expanded(
+          child: GridView.count(
+            primary: false,
+            padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 75.0),
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 10,
+            crossAxisCount: 2,
+            children: List.generate(
+              listaTarget.length,
+              (index) {
+                return GestureDetector(
+                  onTap: () async {
+                    Map<String, dynamic> arg = {"target": listaTarget[index]};
+                    var edit = await Get.toNamed(
+                      Routes.item,
+                      arguments: arg,
+                    );
+
+                    if (edit != null && edit) controller.getAllTarget();
+                  },
+                  child: Card(
+                    clipBehavior: Clip.antiAlias,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Center(
+                          child: SizedBox(
+                            height: (widthScreen / 2) - 45,
+                            width: (widthScreen / 2),
                             child: returnImageFromString(
-                              list[index].imagem,
-                              width_grid,
+                              listaTarget[index].imagem,
+                              widthScreen,
                               const Icon(
                                 Icons.local_mall,
                                 size: 50,
                               ),
+                              null,
                             ),
                           ),
-                          Padding(
-                            padding:
-                                const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Text(
-                                  "${list[index].posicao} - ${list[index].descricao}",
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                fittedBox(list[index]),
-                              ],
-                            ),
+                        ),
+                        Padding(
+                          padding:
+                              const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                "${listaTarget[index].posicao} - ${listaTarget[index].descricao}",
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              fittedBox(listaTarget[index]),
+                            ],
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  );
-                }),
-              ),
+                  ),
+                );
+              },
             ),
-          ],
-        );
-      }),
+          ),
+        ),
+      ],
     );
   }
-}
-
-String sumTotalList(List<TargetModel> list) {
-  num sum = 0.0;
-
-  for (var i = 0; i < list.length; i++) {
-    sum += list[i].valorAtual;
-  }
-
-  return NumberFormat.simpleCurrency().format(sum);
-}
-
-Widget btnDeposit(DashboardController controller) {
-  //printd("btnDeposit");
-  if (controller.sucessReturn.value && controller.countTargets.value != 0) {
-    return SizedBox(
-      width: 250,
-      child: GestureDetector(
-        child: Image.asset('assets/images/depositarOuRetirar.png'),
-        onTap: () async {
-          await Get.toNamed(Routes.deposit);
-          controller.getAllTarget();
-        },
-      ),
-    );
-  } else {
-    return Container();
-  }
-}
-
-Widget fittedBox(TargetModel target) {
-  return Center(
-    child: FittedBox(
-      fit: BoxFit.fitWidth,
-      child: Text(
-          //'${NumberFormat.simpleCurrency().format(target.valorAtual)} / ${target.porcetagem} %\n${NumberFormat.simpleCurrency().format(target.valor)}'),
-          '${target.porcetagem.toStringAsFixed(2)} %'),
-    ),
-  );
 }

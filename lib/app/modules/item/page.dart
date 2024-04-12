@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:ffi';
 import 'dart:io' as io;
 
 import 'package:adaptive_dialog/adaptive_dialog.dart';
@@ -21,9 +20,10 @@ class ItemPage extends GetView<ItemController> {
   late List<String> opcoesCoins;
   late String valorDepositado;
   late String coinstr;
+  late int id;
+  late bool concluido;
 
   ItemPage({super.key}) {
-    //printd("arg: ${Get.arguments}");
     Map<String, dynamic> args = Get.arguments ?? {};
 
     TargetModel target = args['target']!;
@@ -32,6 +32,8 @@ class ItemPage extends GetView<ItemController> {
     controller.setValor(target.valor.toDouble());
     controller.setPeso(target.posicao);
     controller.setImage(target.imagem ?? " ");
+
+    id = target.id;
 
     List<CoinModel> coins = Get.find<CoinService>().coins;
     opcoesCoins = <String>[];
@@ -42,13 +44,16 @@ class ItemPage extends GetView<ItemController> {
 
     var coinId = (target.coin - 1).toInt();
 
-    printd("-> setcoin ${opcoesCoins[coinId]}");
-
     controller.setCoin(opcoesCoins[coinId]);
     controller.setCoinId(coinId);
+    controller.visibleRemove.value = target.removebackground == 0;
 
-    valorDepositado = NumberFormat.simpleCurrency(name: coins[(target.coin - 1).toInt()].symbol, decimalDigits: 2).format(((target.valor * target.porcetagem) / 100));
-    coinstr    = coins[(target.coin - 1).toInt()].name;
+    valorDepositado = NumberFormat.simpleCurrency(
+            name: coins[(target.coin - 1).toInt()].symbol, decimalDigits: 2)
+        .format(((target.valor * target.porcetagem) / 100));
+    coinstr = coins[(target.coin - 1).toInt()].name;
+
+    concluido = !target.ativo;
   }
 
   Future<void> processImage(int id) async {
@@ -61,17 +66,22 @@ class ItemPage extends GetView<ItemController> {
   @override
   Widget build(BuildContext context) {
     const distancia = 20.0;
-    Map<String, dynamic> args = Get.arguments ?? {};
-    int id = args.containsKey('id') ? args['id'] ?? -1 : -1;
 
     processImage(id);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Editar objetivo', style: TextStyle(color: Colors.white,),),
+        title: const Text(
+          'Edit objective',
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
         centerTitle: true,
         backgroundColor: Colors.blue,
-        iconTheme: IconThemeData(color: Colors.white,),
+        iconTheme: const IconThemeData(
+          color: Colors.white,
+        ),
       ),
       body: SingleChildScrollView(
         child: Obx(
@@ -80,19 +90,20 @@ class ItemPage extends GetView<ItemController> {
                 const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
             child: Column(
               children: [
-                getImagem(controller, context),
+                getImagem(context),
                 TextFormField(
                   controller: controller.descricaoController,
                   decoration: const InputDecoration(
-                    labelText: 'Descrição',
+                    labelText: 'Description',
                   ),
                   validator: (String? value) {
                     if (value != null && value.isEmpty) {
-                      return 'Informe a descrição do objetivo';
+                      return 'Provide a description of the objective';
                     }
                     return null;
                   },
                   onChanged: (value) => controller.setDescricao(value),
+                  readOnly: concluido,
                 ),
                 const SizedBox(height: distancia),
                 Row(
@@ -112,59 +123,13 @@ class ItemPage extends GetView<ItemController> {
                         ],
                         keyboardType: TextInputType.number,
                         controller: controller.valorController,
+                        readOnly: concluido,
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(height: distancia),
-                const Text('Selecione o peso do objetivo'),
-                const SizedBox(height: distancia),
-                WheelChooser.integer(
-                  onValueChanged: controller.setPeso,
-                  maxValue: 10,
-                  minValue: 1,
-                  step: 1,
-                  initValue: controller.peso.value,
-                  horizontal: true,
-                  listHeight: 200,
-                  listWidth: 50,
-                ),
-                const SizedBox(height: distancia * 2),
-                Row(
-                  children: [
-                    const Spacer(),
-                    ElevatedButton(
-                      style: ButtonStyle(
-                        foregroundColor:
-                            MaterialStateProperty.all<Color>(Colors.blue),
-                      ),
-                      onPressed: () async {
-                        if (controller.descricaoController.text.isEmpty ||
-                            (controller.valorController.text.isEmpty ||
-                                controller.valorController.text
-                                    .contains(" 0,00"))) {
-                          printd("campos de descricao ou de valor incorretos!");
-                          return;
-                        }
-
-                        await controller.send(id);
-                      },
-                      child: const Text('Salvar'),
-                    ),
-                    const Spacer(),
-                    ElevatedButton(
-                      style: ButtonStyle(
-                        foregroundColor:
-                            MaterialStateProperty.all<Color>(Colors.red),
-                      ),
-                      onPressed: () async {
-                        await controller.delete(id);
-                      },
-                      child: const Text('Excluir'),
-                    ),
-                    const Spacer(),
-                  ],
-                ),
+                if (!concluido) editPesoAndButton(controller),
                 getHistoric(controller, distancia, id),
                 const SizedBox(height: 30),
               ],
@@ -172,6 +137,59 @@ class ItemPage extends GetView<ItemController> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget editPesoAndButton(ItemController controller) {
+    const double distancia = 20;
+    return Column(
+      children: [
+        const Text('Select goal weight'),
+        const SizedBox(height: distancia),
+        WheelChooser.integer(
+          onValueChanged: controller.setPeso,
+          maxValue: 10,
+          minValue: 1,
+          step: 1,
+          initValue: controller.peso.value,
+          horizontal: true,
+          listHeight: 200,
+          listWidth: 50,
+        ),
+        const SizedBox(height: distancia * 2),
+        Row(
+          children: [
+            const Spacer(),
+            ElevatedButton(
+              style: ButtonStyle(
+                foregroundColor: MaterialStateProperty.all<Color>(Colors.blue),
+              ),
+              onPressed: () async {
+                if (controller.descricaoController.text.isEmpty ||
+                    (controller.valorController.text.isEmpty ||
+                        controller.valorController.text.contains(" 0,00"))) {
+                  printd("Incorrect description or value fields!");
+                  return;
+                }
+
+                await controller.send(id);
+              },
+              child: const Text('Save'),
+            ),
+            const Spacer(),
+            ElevatedButton(
+              style: ButtonStyle(
+                foregroundColor: MaterialStateProperty.all<Color>(Colors.red),
+              ),
+              onPressed: () async {
+                await controller.delete(id);
+              },
+              child: const Text('Delete'),
+            ),
+            const Spacer(),
+          ],
+        ),
+      ],
     );
   }
 
@@ -218,9 +236,8 @@ class ItemPage extends GetView<ItemController> {
             .toList(),
         value: controller.selectCoin.value,
         onChanged: (String? value) {
-          printd("selecionou $value, ${opcoesCoins.indexOf(value!)}");
           controller.setCoin(value!);
-          controller.setCoinId(opcoesCoins.indexOf(value!));
+          controller.setCoinId(opcoesCoins.indexOf(value));
         },
         buttonStyleData: ButtonStyleData(
           height: 50,
@@ -264,11 +281,10 @@ class ItemPage extends GetView<ItemController> {
     );
   }
 
-  Future<void> dialogGetImage(
-      ItemController controller, BuildContext context) async {
+  Future<void> dialogGetImage(BuildContext context) async {
     final result = await showConfirmationDialog<int>(
       context: context,
-      title: 'Selecione a fonte da imagem',
+      title: 'Select image source',
       actions: [
         ...List.generate(
           2,
@@ -280,76 +296,111 @@ class ItemPage extends GetView<ItemController> {
       ],
     );
 
-    //printd("result: $result");
-
     if (result == 1) {
       final url = await showTextInputDialog(
           context: context,
           textFields: const [
             DialogTextField(),
           ],
-          title: 'Digite ou cole o endereço web');
+          title: 'Type or paste the web address');
 
       if (url != null && url.isNotEmpty) {
         controller.setImage(url.first);
       }
 
-      //printd("url: $url");
     } else if (result == 0) {
       final ImagePicker picker = ImagePicker();
       final mediaFile = await picker.pickImage(source: ImageSource.gallery);
 
-      printd("media: ${mediaFile?.path}");
-
       if (mediaFile != null) {
         final bytes = io.File(mediaFile.path).readAsBytesSync();
-        controller.setImage(base64Encode(bytes));
+        final base64 = base64Encode(bytes);
+        controller.setImage(base64);
       }
     }
   }
 
-  Widget addImage(ItemController controller, BuildContext context) {
+  Widget addImage(BuildContext context) {
     return ElevatedButton(
       style: ButtonStyle(
         foregroundColor: MaterialStateProperty.all<Color>(Colors.blue),
       ),
       onPressed: () async {
-        await dialogGetImage(controller, context);
+        await dialogGetImage(context);
       },
-      child: const Text('Adicionar uma imagem'),
+      child: const Text('Add an image'),
     );
   }
 
   Widget getImagem(
-    ItemController controller,
     BuildContext context,
   ) {
-    //printd("getImagem: ${controller.image}");
 
     if (controller.image.value.isEmpty ||
         controller.image.value.compareTo(" ") == 0) {
-      return addImage(controller, context);
+      return addImage(context);
     }
 
     final double width = (MediaQuery.of(context).size.width - 40) * 0.75;
 
     Widget? image = returnImageFromString(
-      controller.image.value,
-      width,
-      addImage(controller, context),
-    );
+        controller.image.value, width, addImage(context), controller);
 
-    //printd("size: $width, widget: ${image?.runtimeType}");
+    if (controller.visibleRemove.value) {
+      return Padding(
+        padding: const EdgeInsets.only(left: 15, top: 15),
+        child: GestureDetector(
+          onLongPress: () async {
+            await dialogGetImage(context);
+          },
+          child: Column(
+            children: [
+              image,
+              Row(
+                children: [
+                  const Spacer(),
+                  ElevatedButton(
+                    style: ButtonStyle(
+                      foregroundColor:
+                          MaterialStateProperty.all<Color>(Colors.blue),
+                    ),
+                    onPressed: () async {
 
-    return Padding(
-      padding: const EdgeInsets.only(left: 15, top: 15),
-      child: GestureDetector(
-        onLongPress: () async {
-          await dialogGetImage(controller, context);
-        },
-        child: image,
-      ),
-    );
+                      controller.txtRemove.value = "Loading...";
+
+                      String source = controller.imageBase64.isEmpty
+                          ? controller.image.value
+                          : controller.imageBase64;
+
+                      String result =
+                          await returnImageWithoutBackground(source);
+
+                      if (source.compareTo(result) != 0) {
+                        controller.visibleRemove.value = false;
+                      }
+                      controller.image.value = result;
+                      controller.imageBase64 = result;
+                      controller.txtRemove.value = "Remove background";
+                    },
+                    child: Text(controller.txtRemove.value),
+                  ),
+                ],
+              )
+            ],
+          ),
+        ),
+      );
+    } else {
+      return Padding(
+        padding: const EdgeInsets.only(left: 15, top: 15),
+        child: GestureDetector(
+          onLongPress: () async {
+            await dialogGetImage(context);
+          },
+          child: image,
+        ),
+      );
+    }
   }
 
   Widget getHistoric(ItemController controller, double distancia, int id) {
@@ -360,27 +411,24 @@ class ItemPage extends GetView<ItemController> {
           height: 10,
         ),
         //SizedBox(height: distancia),
-        Text('Total depositado em $coinstr foi: $valorDepositado'),
+        Text('Total deposited in $coinstr was: $valorDepositado'),
         const Divider(
           height: 10,
         ),
         const Text(
-          "Historico",
+          "Historic",
           textAlign: TextAlign.center,
         ),
         SizedBox(height: distancia),
         FutureBuilder(
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              final List<DeposityModel> depositys = snapshot.data!;
+              final List<DepositModel> deposits = snapshot.data!;
 
-              printd(
-                  "lista: ${depositys.toString()}, tamanho: ${depositys.length}");
-
-              if (depositys.isNotEmpty) {
+              if (deposits.isNotEmpty) {
                 return Column(
                   children: [
-                    for (DeposityModel deposity in depositys)
+                    for (DepositModel deposit in deposits)
                       Column(
                         children: [
                           Row(
@@ -388,15 +436,15 @@ class ItemPage extends GetView<ItemController> {
                               Container(
                                 height: 20,
                                 width: 20,
-                                color: deposity.valor > 0
+                                color: deposit.valor > 0
                                     ? Colors.blue
                                     : Colors.red,
                               ),
                               const Spacer(),
                               Text(NumberFormat.simpleCurrency()
-                                  .format(deposity.valor)),
+                                  .format(deposit.valor)),
                               const Spacer(),
-                              Text(deposity.createAt),
+                              Text(deposit.createAt),
                             ],
                           ),
                           const Divider(height: 10),
@@ -405,12 +453,12 @@ class ItemPage extends GetView<ItemController> {
                   ],
                 );
               } else {
-                return const Text('Nao historico para o target');
+                return const Text('Not historical for the target');
               }
             }
             return Container();
           },
-          future: controller.getHistorico(id),
+          future: controller.getHistoric(id),
         ),
       ],
     );

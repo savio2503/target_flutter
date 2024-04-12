@@ -20,6 +20,5 @@ class CoinService extends GetxService {
 
   Future<void> getCoins() async {
     _coins = await _repository.getAllCoins();
-    printd("coins $_coins");
   }
 }

@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:target/app/data/services/storage/service.dart';
 import 'package:target/app/modules/login/controller.dart';
 import 'package:target/app/modules/login/widgets/logged.dart';
 import 'package:target/app/modules/login/widgets/login.dart';
 import 'package:target/app/modules/login/widgets/signup.dart';
 
 class LoginPage extends GetView<LoginController> {
-  LoginPage({super.key});
+  const LoginPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +25,7 @@ class LoginPage extends GetView<LoginController> {
         ),
         centerTitle: true,
         backgroundColor: Colors.blue,
-        iconTheme: IconThemeData(color: Colors.white,),
+        iconTheme: const IconThemeData(color: Colors.white,),
       ),
       body: Obx(
         () => Column(

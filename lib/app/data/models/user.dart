@@ -6,4 +6,9 @@ class UserModel {
   factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
         email: json['email'],
       );
+
+  @override
+  String toString() {
+    return "user=[email: ${email}]";
+  }
 }

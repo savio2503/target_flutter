@@ -2,24 +2,29 @@ import 'package:flutter/material.dart';
 import 'package:target/app/modules/login/controller.dart';
 import 'package:target/app/tools/functions.dart';
 
-class Login extends StatelessWidget {
-  const Login(this.controller);
+class Login extends StatefulWidget {
+  const Login(this.controller, {super.key});
 
   final LoginController controller;
+
+  @override
+  State<Login> createState() => _LoginState();
+}
+
+class _LoginState extends State<Login> {
+  String error = "";
+
+  changeError(String value) {
+    setState(() {
+      error = value;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        /*Padding(
-          padding: const EdgeInsets.only(left: 15, top: 15),
-          child: Image.asset(
-            "assets/images/vector-1.png",
-            width: 400,
-            height: 430,
-          ),
-        ),*/
         const SizedBox(height: 18),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 50),
@@ -29,7 +34,7 @@ class Login extends StatelessWidget {
             children: [
               const SizedBox(height: 50),
               TextField(
-                controller: controller.emailController,
+                controller: widget.controller.emailController,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   color: Color(0xFF393939),
@@ -37,6 +42,7 @@ class Login extends StatelessWidget {
                   fontFamily: 'Poppins',
                   fontWeight: FontWeight.w400,
                 ),
+                onChanged: (_) => changeError(""),
                 decoration: const InputDecoration(
                   labelText: 'Email',
                   labelStyle: TextStyle(
@@ -69,7 +75,7 @@ class Login extends StatelessWidget {
               ),
               const SizedBox(height: 30),
               TextField(
-                controller: controller.passwordController,
+                controller: widget.controller.passwordController,
                 textAlign: TextAlign.center,
                 obscureText: true,
                 style: const TextStyle(
@@ -78,6 +84,7 @@ class Login extends StatelessWidget {
                   fontFamily: 'Poppins',
                   fontWeight: FontWeight.w400,
                 ),
+                onChanged: (_) => changeError(""),
                 decoration: const InputDecoration(
                   labelText: 'Password',
                   labelStyle: TextStyle(
@@ -111,10 +118,14 @@ class Login extends StatelessWidget {
                   width: 329,
                   height: 56,
                   child: ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       printd("chamando login screen");
-                      controller.login();
-                    } ,
+                      bool result = await widget.controller.login();
+
+                      if (!result) {
+                        changeError(widget.controller.error.value);
+                      }
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF9F7BFF),
                     ),
@@ -145,7 +156,7 @@ class Login extends StatelessWidget {
                   const SizedBox(width: 2.5),
                   InkWell(
                     onTap: () {
-                      controller.setSignup();
+                      widget.controller.setSignup();
                     },
                     child: const Text(
                       'Sign Up',
@@ -158,6 +169,12 @@ class Login extends StatelessWidget {
                     ),
                   ),
                 ],
+              ),
+              const SizedBox(height: 15),
+              Text(
+                error,
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: Colors.red),
               ),
             ],
           ),

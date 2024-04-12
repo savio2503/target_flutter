@@ -5,6 +5,8 @@ import 'package:get/get.dart';
 import 'package:target/app/modules/deposit/controller.dart';
 
 class DepositPage extends GetView<DepositController> {
+  const DepositPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

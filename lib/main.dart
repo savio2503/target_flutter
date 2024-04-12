@@ -6,10 +6,10 @@ import 'package:intl/intl.dart';
 import 'package:target/app/core/theme/app_theme.dart';
 import 'package:target/app/data/provider/api.dart';
 import 'package:target/app/data/services/auth/repositoy.dart';
-import 'package:target/app/data/services/auth/service..dart';
+import 'package:target/app/data/services/auth/auth_service..dart';
 import 'package:target/app/data/services/coin/repository.dart';
 import 'package:target/app/data/services/coin/service.dart';
-import 'package:target/app/data/services/storage/service.dart';
+import 'package:target/app/data/services/storage/storage_service.dart';
 import 'package:target/routes/pages.dart';
 import 'package:target/routes/routes.dart';
 

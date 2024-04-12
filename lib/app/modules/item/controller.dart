@@ -1,12 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:target/app/core/image_callback.dart';
 import 'package:target/app/data/models/deposit.dart';
 import 'package:target/app/data/models/target_request.dart';
 import 'package:target/app/modules/item/repository.dart';
 import 'package:target/app/tools/functions.dart';
 
-class ItemController extends GetxController {
+class ItemController extends GetxController implements ImageCallback {
   final ItemRepository _repository;
 
   var descricaoController = TextEditingController();
@@ -16,6 +17,9 @@ class ItemController extends GetxController {
   var processado = false.obs;
   var selectCoin = "".obs;
   var coinId = 1.obs;
+  var imageBase64 = "";
+  var txtRemove = "Remover background".obs;
+  var visibleRemove = true.obs;
 
   ItemController(this._repository);
 
@@ -23,16 +27,22 @@ class ItemController extends GetxController {
 
   void setCoinId(int value) => coinId.value = (value + 1);
 
-  void setImage(String value) => image.value = value;
+  void setImage(String value) {
+    image.value = value;
+    visibleRemove.value = true;
+  }
 
   void setDescricao(String value) => descricaoController.text = value;
 
-  void setValor(double value) => valorController.text = NumberFormat.simpleCurrency(name: '', decimalDigits: 2,).format(value);
+  void setValor(double value) =>
+      valorController.text = NumberFormat.simpleCurrency(
+        name: '',
+        decimalDigits: 2,
+      ).format(value);
 
   void setPeso(dynamic value) => peso.value = value.toInt();
 
   send(int id) async {
-
     try {
       var valor = currencyToDouble(valorController.text);
 
@@ -40,8 +50,9 @@ class ItemController extends GetxController {
         descricao: descricaoController.text,
         valor: valor,
         posicao: peso.value,
-        imagem: image.value,
+        imagem: imageBase64.isEmpty ? image.value : imageBase64,
         coin: coinId.value,
+        removebackground: visibleRemove.value ? 0 : 1,
       );
 
       target.id = id;
@@ -49,7 +60,7 @@ class ItemController extends GetxController {
 
       Get.back(result: true);
     } catch (error) {
-      printd("erro ao inserir/editar um novo objetivo: $error");
+      printd("error when inserting/editing a new objective: $error");
     }
   }
 
@@ -59,17 +70,17 @@ class ItemController extends GetxController {
 
       Get.back(result: true);
     } catch (error) {
-      printd("erro ao excluir target: $error");
+      printd("error when deleting target: $error");
     }
   }
 
-  Future<List<DeposityModel>> getHistorico(int targetId) async {
-    List<DeposityModel> result = [];
+  Future<List<DepositModel>> getHistoric(int targetId) async {
+    List<DepositModel> result = [];
 
     try {
       result = await _repository.getAllDeposity(targetId);
     } catch (e) {
-      printd("erro ao buscar o historico: $e");
+      printd("error when searching history: $e");
     }
 
     return result;
@@ -82,7 +93,12 @@ class ItemController extends GetxController {
       image.value = await _repository.getImagem(id);
       processado.value = true;
     } catch (e) {
-      printd("erro ao buscar a imagem: $e");
+      printd("error when searching for image: $e");
     }
+  }
+
+  @override
+  void onImageReceived(String base64Image) {
+    imageBase64 = base64Image;
   }
 }

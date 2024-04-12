@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:get/get.dart';
 import 'package:get/get_connect/http/src/request/request.dart';
@@ -8,8 +9,7 @@ import 'package:target/app/data/models/target.dart';
 import 'package:target/app/data/models/target_request.dart';
 import 'package:target/app/data/models/user.dart';
 import 'package:target/app/data/models/user_login_request.dart';
-import 'package:target/app/data/models/user_login_response.dart';
-import 'package:target/app/data/services/storage/service.dart';
+import 'package:target/app/data/services/storage/storage_service.dart';
 import 'package:target/app/tools/functions.dart';
 
 class Api extends GetConnect {
@@ -17,9 +17,8 @@ class Api extends GetConnect {
 
   @override
   void onInit() {
-    httpClient.baseUrl = 'http://100.96.1.2:3333/';
-    //httpClient.baseUrl = 'http://192.168.1.9:3333/';
-    //httpClient.baseUrl = 'http://192.168.0.192:3333/';
+    //server address
+    httpClient.baseUrl = 'http://192.168.3.20:3333/';
 
     httpClient.addRequestModifier((Request request) {
       request.headers['Accept'] = 'application/json';
@@ -31,11 +30,13 @@ class Api extends GetConnect {
 
     httpClient.addAuthenticator((Request request) {
       var token = _storageService.token;
-      var headers = {'Authorization': 'Bearer $token'};
+      var session = _storageService.session;
 
-      //printd("token: $token");
+      var authorization = {'Authorization': 'Bearer $token'};
+      var cookie = {'Cookie': '$session'};
 
-      request.headers.addAll(headers);
+      request.headers.addAll(authorization);
+      request.headers.addAll(cookie);
 
       return request;
     });
@@ -43,104 +44,173 @@ class Api extends GetConnect {
     super.onInit();
   }
 
+  Map<String, String> getHeaders() {
+
+    Map<String, String> res = {};
+
+    var token = _storageService.token;
+    var session = _storageService.session;
+
+    var authorization = {'Authorization': 'Bearer $token'};
+    var cookie = {'Cookie': '$session'};
+    var keep = {'Connection': 'keep-alive'};
+
+    res.addAll(authorization);
+    res.addAll(cookie);
+    res.addAll(keep);
+
+    return res;
+  }
+
   Future<List<TargetModel>> getTargets(bool? ativo) async {
     dynamic response;
+
     if (ativo == null) {
-      response = _errorHandler(await get('all'));
+      response = _errorHandler(await get('all', headers: getHeaders()));
     } else if (ativo) {
-      response = _errorHandler(await get('allAtive'));
-    } else {
-      response = _errorHandler(await get('all'));
+      response = _errorHandler(await get('allAtive', headers: getHeaders()));
     }
 
     List<TargetModel> targets = [];
 
-    printd("retorno getTargets($ativo) = ${response.body}");
-
     for (var target in response.body) {
-
       targets.add(TargetModel.fromJson(target));
     }
 
     return targets;
   }
 
-  Future<String> getImagem(int targetId) async {
-    var response = _errorHandler(await get('image/$targetId'));
+  Future<String> getImage(int targetId) async {
+    var response = _errorHandler(await get('image/$targetId', headers: getHeaders()));
 
     return response.body;
   }
 
-  Future<List<DeposityModel>> getAllDeposity(int targetId) async {
-    var response = _errorHandler(await get('deposit/$targetId'));
-
-    List<DeposityModel> deposits = [];
+  Future<List<DepositModel>> getAllDeposit(int targetId) async {
+    
+    var response = _errorHandler(await get('deposit/$targetId', headers: getHeaders()));
+    
+    List<DepositModel> deposits = [];
 
     for (var row in response.body) {
-      //printd('add: $row');
-      deposits.add(DeposityModel.fromJson(row));
+      
+      var aux = DepositModel.fromJson(row);
+      if (aux.valor != 0) {
+        deposits.add(aux);
+      }
     }
 
     return deposits;
   }
 
   Future<TargetModel> getTarget(int id) async {
-    var response = _errorHandler(await get(''));
+    var response = _errorHandler(await get('', headers: getHeaders()));
 
     return TargetModel.fromJson(response.body);
   }
 
-  Future<UserLoginResponseModel> login(UserLoginRequestModel data) async {
-    printd("chamando o login, body: ${jsonEncode(data)}");
-    var response = _errorHandler(await post('login', jsonEncode(data)));
-    printd("retorno login");
-    return UserLoginResponseModel.fromJson(response.body);
+  Future<void> login(UserLoginRequestModel data) async {
+    String error = "";
+    try {
+      var response = _errorHandler(await post('login', jsonEncode(data)));
+
+      //getting the cookie in the response
+      response.headers!.forEach((key, value) {
+        if (key == HttpHeaders.setCookieHeader) {
+          String cookie = "";
+
+          RegExp regex = RegExp(r"SameSite=([^;]+),([^;]+)");
+          Iterable<Match> matches = regex.allMatches(value);
+          List<String> values = [];
+
+          matches.forEach((element) {
+            String? value = element.group(2);
+            if (value != null && value.isNotEmpty) {
+              values.add(value);
+            }
+          });
+
+          cookie = values.join('; ');
+
+          _storageService.saveSession(cookie);
+        }
+      });
+    } catch (e) {
+      RegExp regex = RegExp('"message":"(.*?)"');
+      Iterable<Match> matches = regex.allMatches(e.toString());
+
+      matches.forEach((element) {
+        String? value = element.group(1);
+        if (value != null && value.isNotEmpty) {
+          error = value;
+        }
+      });
+
+      if (error.isEmpty) {
+        error = e.toString();
+      }
+
+      throw error;
+    }
   }
 
   Future<UserModel> getUser() async {
-    var response = _errorHandler(await get('auth/me'));
 
-    return UserModel.fromJson(response.body);
+    if (_storageService.session != null && _storageService.session!.isNotEmpty ) {
+
+      var response = _errorHandler(await get('auth/me', headers: getHeaders()));
+      return UserModel.fromJson(response.body);
+
+    } else {
+      throw 'Not logged in';
+    }
+
   }
 
   Future<void> addTarget(TargetRequestModel target) async {
-    printd('chamando o add target, body: ${jsonEncode(target)}');
 
-    _errorHandler(await post('target', jsonEncode(target)));
+    _errorHandler(await post('target', jsonEncode(target), headers: getHeaders()));
 
-    return; //TargetModel.fromJson(response.body);
+    return;
   }
 
-  Future<void> editarTarget(TargetRequestModel target) async {
-    printd('chamando o editar target, body: ${jsonEncode(target)}');
+  Future<void> editTarget(TargetRequestModel target) async {
 
-    _errorHandler(await put('target/${target.id}', jsonEncode(target)));
+    _errorHandler(await put('target/${target.id}', jsonEncode(target), headers: getHeaders()));
 
-    return; //TargetModel.fromJson(response.body);
+    return;
+  }
+  
+  Future<void> editImage(int targetId, String image) async {
+
+    String request = '{"targetId":"$targetId","image":"$image"}';
+
+    try {
+      _errorHandler(await put('image', request, headers: getHeaders()));
+    } catch (error) {
+      printd('error updating image: $error');
+    }
   }
 
   Future<void> deposit(double amount) async {
-    _errorHandler(await post('inside', '{"valor":$amount}'));
+    _errorHandler(await post('inside', '{"valor":$amount}', headers: getHeaders()));
 
     return;
   }
 
   Future<void> deleteTarget(int id) async {
-    printd("delete id: $id");
 
-    _errorHandler(await delete('target/$id'));
+    _errorHandler(await delete('target/$id', headers: getHeaders()));
 
     return;
   }
 
   Future<List<CoinModel>> getAllCoins() async {
-
-    var response = _errorHandler(await get('allCoin'));
+    var response = _errorHandler(await get('allCoin', headers: getHeaders()));
 
     List<CoinModel> coins = [];
 
     for (var row in response.body) {
-      //printd('add: $row');
       coins.add(CoinModel.fromJson(row));
     }
 
@@ -150,8 +220,6 @@ class Api extends GetConnect {
   Response _errorHandler(Response response) {
     String? errorMessage = response.bodyString;
 
-    //printd("-> ${response.bodyString}");
-
     switch (response.statusCode) {
       case 200:
       case 202:
@@ -159,13 +227,13 @@ class Api extends GetConnect {
         return response;
       default:
         if (errorMessage == null) {
-          throw 'Por favor, realize um login';
+          throw 'Please login';
         } else if (errorMessage.contains("E_UNAUTHORIZED_ACCESS")) {
-          throw 'Por favor, realize um login';
+          throw 'Please login';
         } else if (errorMessage.contains("Invalid credentials")) {
-          throw 'Login ou senha incorreta(s), por favor tente novamente';
+          throw 'Incorrect login or password, please try again';
         } else {
-          throw 'Ocorreu um erro';
+          throw errorMessage;
         }
     }
   }
