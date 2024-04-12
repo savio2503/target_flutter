@@ -36,15 +36,11 @@ class AddController extends GetxController implements ImageCallback {
     String descricao = descricaoController.text;
     String valor = valorController.text;
 
-    //printd("d: '$descricao', v: '$valor'");
-
     if (descricao.isEmpty || (valor.isEmpty || valor.contains(" 0,00"))) {
       enable.value = false;
-      //printd("false");
       return;
     }
 
-    //printd("true");
     enable.value = true;
     return;
   }
@@ -66,7 +62,7 @@ class AddController extends GetxController implements ImageCallback {
 
       Get.back(result: true);
     } catch (error) {
-      printd("erro ao inserir/editar um novo objetivo: $error");
+      printd("error when inserting/editing a new objective: $error");
     }
   }
 

@@ -22,9 +22,8 @@ class ItemPage extends GetView<ItemController> {
   late String coinstr;
   late int id;
   late bool concluido;
-//int id = args.containsKey('id') ? args['id'] ?? -1 : -1;
+
   ItemPage({super.key}) {
-    //printd("arg: ${Get.arguments}");
     Map<String, dynamic> args = Get.arguments ?? {};
 
     TargetModel target = args['target']!;
@@ -33,8 +32,6 @@ class ItemPage extends GetView<ItemController> {
     controller.setValor(target.valor.toDouble());
     controller.setPeso(target.posicao);
     controller.setImage(target.imagem ?? " ");
-
-    //print("imagem parametro: ${target.imagem?.substring(0, 50)}");
 
     id = target.id;
 
@@ -46,8 +43,6 @@ class ItemPage extends GetView<ItemController> {
     }
 
     var coinId = (target.coin - 1).toInt();
-
-    printd("-> setcoin ${opcoesCoins[coinId]}");
 
     controller.setCoin(opcoesCoins[coinId]);
     controller.setCoinId(coinId);
@@ -77,7 +72,7 @@ class ItemPage extends GetView<ItemController> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Editar objetivo',
+          'Edit objective',
           style: TextStyle(
             color: Colors.white,
           ),
@@ -99,11 +94,11 @@ class ItemPage extends GetView<ItemController> {
                 TextFormField(
                   controller: controller.descricaoController,
                   decoration: const InputDecoration(
-                    labelText: 'Descrição',
+                    labelText: 'Description',
                   ),
                   validator: (String? value) {
                     if (value != null && value.isEmpty) {
-                      return 'Informe a descrição do objetivo';
+                      return 'Provide a description of the objective';
                     }
                     return null;
                   },
@@ -149,7 +144,7 @@ class ItemPage extends GetView<ItemController> {
     const double distancia = 20;
     return Column(
       children: [
-        const Text('Selecione o peso do objetivo'),
+        const Text('Select goal weight'),
         const SizedBox(height: distancia),
         WheelChooser.integer(
           onValueChanged: controller.setPeso,
@@ -173,13 +168,13 @@ class ItemPage extends GetView<ItemController> {
                 if (controller.descricaoController.text.isEmpty ||
                     (controller.valorController.text.isEmpty ||
                         controller.valorController.text.contains(" 0,00"))) {
-                  printd("campos de descricao ou de valor incorretos!");
+                  printd("Incorrect description or value fields!");
                   return;
                 }
 
                 await controller.send(id);
               },
-              child: const Text('Salvar'),
+              child: const Text('Save'),
             ),
             const Spacer(),
             ElevatedButton(
@@ -189,7 +184,7 @@ class ItemPage extends GetView<ItemController> {
               onPressed: () async {
                 await controller.delete(id);
               },
-              child: const Text('Excluir'),
+              child: const Text('Delete'),
             ),
             const Spacer(),
           ],
@@ -241,8 +236,7 @@ class ItemPage extends GetView<ItemController> {
             .toList(),
         value: controller.selectCoin.value,
         onChanged: (String? value) {
-          printd("selecionou $value, ${opcoesCoins.indexOf(value!)}");
-          controller.setCoin(value);
+          controller.setCoin(value!);
           controller.setCoinId(opcoesCoins.indexOf(value));
         },
         buttonStyleData: ButtonStyleData(
@@ -290,7 +284,7 @@ class ItemPage extends GetView<ItemController> {
   Future<void> dialogGetImage(BuildContext context) async {
     final result = await showConfirmationDialog<int>(
       context: context,
-      title: 'Selecione a fonte da imagem',
+      title: 'Select image source',
       actions: [
         ...List.generate(
           2,
@@ -302,32 +296,26 @@ class ItemPage extends GetView<ItemController> {
       ],
     );
 
-    //printd("result: $result");
-
     if (result == 1) {
       final url = await showTextInputDialog(
           context: context,
           textFields: const [
             DialogTextField(),
           ],
-          title: 'Digite ou cole o endereço web');
+          title: 'Type or paste the web address');
 
       if (url != null && url.isNotEmpty) {
         controller.setImage(url.first);
       }
 
-      //printd("url: $url");
     } else if (result == 0) {
       final ImagePicker picker = ImagePicker();
       final mediaFile = await picker.pickImage(source: ImageSource.gallery);
 
-      printd("media: ${mediaFile?.path}");
-
       if (mediaFile != null) {
         final bytes = io.File(mediaFile.path).readAsBytesSync();
         final base64 = base64Encode(bytes);
-        print("imagem set: ${base64.substring(0, 50)}");
-        this.controller.setImage(base64);
+        controller.setImage(base64);
       }
     }
   }
@@ -340,14 +328,13 @@ class ItemPage extends GetView<ItemController> {
       onPressed: () async {
         await dialogGetImage(context);
       },
-      child: const Text('Adicionar uma imagem'),
+      child: const Text('Add an image'),
     );
   }
 
   Widget getImagem(
     BuildContext context,
   ) {
-    //printd("getImagem: ${controller.image}");
 
     if (controller.image.value.isEmpty ||
         controller.image.value.compareTo(" ") == 0) {
@@ -358,8 +345,6 @@ class ItemPage extends GetView<ItemController> {
 
     Widget? image = returnImageFromString(
         controller.image.value, width, addImage(context), controller);
-
-    //printd("size: $width, widget: ${image?.runtimeType}");
 
     if (controller.visibleRemove.value) {
       return Padding(
@@ -380,9 +365,8 @@ class ItemPage extends GetView<ItemController> {
                           MaterialStateProperty.all<Color>(Colors.blue),
                     ),
                     onPressed: () async {
-                      print("apertou");
 
-                      controller.txtRemove.value = "Carregando....";
+                      controller.txtRemove.value = "Loading...";
 
                       String source = controller.imageBase64.isEmpty
                           ? controller.image.value
@@ -396,7 +380,7 @@ class ItemPage extends GetView<ItemController> {
                       }
                       controller.image.value = result;
                       controller.imageBase64 = result;
-                      controller.txtRemove.value = "Remover background";
+                      controller.txtRemove.value = "Remove background";
                     },
                     child: Text(controller.txtRemove.value),
                   ),
@@ -427,26 +411,24 @@ class ItemPage extends GetView<ItemController> {
           height: 10,
         ),
         //SizedBox(height: distancia),
-        Text('Total depositado em $coinstr foi: $valorDepositado'),
+        Text('Total deposited in $coinstr was: $valorDepositado'),
         const Divider(
           height: 10,
         ),
         const Text(
-          "Historico",
+          "Historic",
           textAlign: TextAlign.center,
         ),
         SizedBox(height: distancia),
         FutureBuilder(
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              final List<DeposityModel> depositys = snapshot.data!;
+              final List<DepositModel> deposits = snapshot.data!;
 
-              //printd("lista: ${depositys.toString()}, tamanho: ${depositys.length}");
-
-              if (depositys.isNotEmpty) {
+              if (deposits.isNotEmpty) {
                 return Column(
                   children: [
-                    for (DeposityModel deposity in depositys)
+                    for (DepositModel deposit in deposits)
                       Column(
                         children: [
                           Row(
@@ -454,15 +436,15 @@ class ItemPage extends GetView<ItemController> {
                               Container(
                                 height: 20,
                                 width: 20,
-                                color: deposity.valor > 0
+                                color: deposit.valor > 0
                                     ? Colors.blue
                                     : Colors.red,
                               ),
                               const Spacer(),
                               Text(NumberFormat.simpleCurrency()
-                                  .format(deposity.valor)),
+                                  .format(deposit.valor)),
                               const Spacer(),
-                              Text(deposity.createAt),
+                              Text(deposit.createAt),
                             ],
                           ),
                           const Divider(height: 10),
@@ -471,12 +453,12 @@ class ItemPage extends GetView<ItemController> {
                   ],
                 );
               } else {
-                return const Text('Nao historico para o target');
+                return const Text('Not historical for the target');
               }
             }
             return Container();
           },
-          future: controller.getHistorico(id),
+          future: controller.getHistoric(id),
         ),
       ],
     );

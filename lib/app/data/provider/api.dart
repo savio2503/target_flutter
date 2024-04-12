@@ -17,8 +17,8 @@ class Api extends GetConnect {
 
   @override
   void onInit() {
-    httpClient.baseUrl = 'http://192.168.1.151:3333/';
-    //httpClient.baseUrl = 'http://192.168.1.4:3333/';
+    //server address
+    httpClient.baseUrl = 'http://192.168.3.20:3333/';
 
     httpClient.addRequestModifier((Request request) {
       request.headers['Accept'] = 'application/json';
@@ -69,8 +69,6 @@ class Api extends GetConnect {
       response = _errorHandler(await get('all', headers: getHeaders()));
     } else if (ativo) {
       response = _errorHandler(await get('allAtive', headers: getHeaders()));
-    } else {
-      response = _errorHandler(await get('all', headers: getHeaders()));
     }
 
     List<TargetModel> targets = [];
@@ -82,21 +80,21 @@ class Api extends GetConnect {
     return targets;
   }
 
-  Future<String> getImagem(int targetId) async {
+  Future<String> getImage(int targetId) async {
     var response = _errorHandler(await get('image/$targetId', headers: getHeaders()));
 
     return response.body;
   }
 
-  Future<List<DeposityModel>> getAllDeposity(int targetId) async {
+  Future<List<DepositModel>> getAllDeposit(int targetId) async {
     
     var response = _errorHandler(await get('deposit/$targetId', headers: getHeaders()));
     
-    List<DeposityModel> deposits = [];
+    List<DepositModel> deposits = [];
 
     for (var row in response.body) {
       
-      var aux = DeposityModel.fromJson(row);
+      var aux = DepositModel.fromJson(row);
       if (aux.valor != 0) {
         deposits.add(aux);
       }
@@ -112,13 +110,11 @@ class Api extends GetConnect {
   }
 
   Future<void> login(UserLoginRequestModel data) async {
-    printd("chamando o login, body: ${jsonEncode(data)}");
-    String erro = "";
+    String error = "";
     try {
       var response = _errorHandler(await post('login', jsonEncode(data)));
-      printd("retorno login");
 
-      //pegando o cookie na resposta
+      //getting the cookie in the response
       response.headers!.forEach((key, value) {
         if (key == HttpHeaders.setCookieHeader) {
           String cookie = "";
@@ -146,15 +142,15 @@ class Api extends GetConnect {
       matches.forEach((element) {
         String? value = element.group(1);
         if (value != null && value.isNotEmpty) {
-          erro = value;
+          error = value;
         }
       });
 
-      if (erro.isEmpty) {
-        erro = e.toString();
+      if (error.isEmpty) {
+        error = e.toString();
       }
 
-      throw erro;
+      throw error;
     }
   }
 
@@ -166,36 +162,33 @@ class Api extends GetConnect {
       return UserModel.fromJson(response.body);
 
     } else {
-      throw 'Não logado';
+      throw 'Not logged in';
     }
 
   }
 
   Future<void> addTarget(TargetRequestModel target) async {
-    printd('chamando o add target, body: ${jsonEncode(target)}');
 
     _errorHandler(await post('target', jsonEncode(target), headers: getHeaders()));
 
     return;
   }
 
-  Future<void> editarTarget(TargetRequestModel target) async {
+  Future<void> editTarget(TargetRequestModel target) async {
 
     _errorHandler(await put('target/${target.id}', jsonEncode(target), headers: getHeaders()));
 
     return;
   }
   
-  Future<void> editarImage(int targetId, String image) async {
+  Future<void> editImage(int targetId, String image) async {
 
     String request = '{"targetId":"$targetId","image":"$image"}';
-
-    print('editar a imagem para o ojetivo ${request.substring(0, 100)}');
 
     try {
       _errorHandler(await put('image', request, headers: getHeaders()));
     } catch (error) {
-      print('erro ao atualizar a imagem: $error');
+      printd('error updating image: $error');
     }
   }
 
@@ -206,7 +199,6 @@ class Api extends GetConnect {
   }
 
   Future<void> deleteTarget(int id) async {
-    printd("delete id: $id");
 
     _errorHandler(await delete('target/$id', headers: getHeaders()));
 
@@ -219,7 +211,6 @@ class Api extends GetConnect {
     List<CoinModel> coins = [];
 
     for (var row in response.body) {
-      //printd('add: $row');
       coins.add(CoinModel.fromJson(row));
     }
 
@@ -229,21 +220,18 @@ class Api extends GetConnect {
   Response _errorHandler(Response response) {
     String? errorMessage = response.bodyString;
 
-    //printd("-> ${response.bodyString}");
-
     switch (response.statusCode) {
       case 200:
       case 202:
       case 204:
         return response;
       default:
-        printd("-> erro response: ${response.bodyString}");
         if (errorMessage == null) {
-          throw 'Por favor, realize um login';
+          throw 'Please login';
         } else if (errorMessage.contains("E_UNAUTHORIZED_ACCESS")) {
-          throw 'Por favor, realize um login';
+          throw 'Please login';
         } else if (errorMessage.contains("Invalid credentials")) {
-          throw 'Login ou senha incorreta(s), por favor tente novamente';
+          throw 'Incorrect login or password, please try again';
         } else {
           throw errorMessage;
         }

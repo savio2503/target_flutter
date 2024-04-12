@@ -27,7 +27,7 @@ class DashboardController extends GetxController {
   }
 
   getAllTarget() async {
-    printd("getAllTarget()");
+
     final _authService = Get.find<AuthService>();
 
     await _authService.getUser();

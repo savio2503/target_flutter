@@ -60,7 +60,7 @@ class ItemController extends GetxController implements ImageCallback {
 
       Get.back(result: true);
     } catch (error) {
-      printd("erro ao inserir/editar um novo objetivo: $error");
+      printd("error when inserting/editing a new objective: $error");
     }
   }
 
@@ -70,17 +70,17 @@ class ItemController extends GetxController implements ImageCallback {
 
       Get.back(result: true);
     } catch (error) {
-      printd("erro ao excluir target: $error");
+      printd("error when deleting target: $error");
     }
   }
 
-  Future<List<DeposityModel>> getHistorico(int targetId) async {
-    List<DeposityModel> result = [];
+  Future<List<DepositModel>> getHistoric(int targetId) async {
+    List<DepositModel> result = [];
 
     try {
       result = await _repository.getAllDeposity(targetId);
     } catch (e) {
-      printd("erro ao buscar o historico: $e");
+      printd("error when searching history: $e");
     }
 
     return result;
@@ -91,10 +91,9 @@ class ItemController extends GetxController implements ImageCallback {
 
     try {
       image.value = await _repository.getImagem(id);
-      print("imagem get: ${image.value.substring(0, 50)}");
       processado.value = true;
     } catch (e) {
-      printd("erro ao buscar a imagem: $e");
+      printd("error when searching for image: $e");
     }
   }
 

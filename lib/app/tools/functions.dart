@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:target/app/core/image_callback.dart';
 import 'package:target/app/tools/remove_background.dart';
 
-printd(String? msg) {
+void printd(String? msg) {
   if (kDebugMode) {
     print(msg ?? '');
   }

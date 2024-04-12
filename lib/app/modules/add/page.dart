@@ -16,19 +16,19 @@ import 'package:wheel_chooser/wheel_chooser.dart';
 class AddPage extends GetView<AddController> {
   AddPage({super.key}) {
     List<CoinModel> coins = Get.find<CoinService>().coins;
-    opcoesCoins = <String>[];
+    optionCoins = <String>[];
 
     for (CoinModel coin in coins) {
-      opcoesCoins.add(coin.symbol);
+      optionCoins.add(coin.symbol);
     }
 
-    controller.setCoin(opcoesCoins[0]);
+    controller.setCoin(optionCoins[0]);
   }
 
-  late List<String> opcoesCoins;
+  late List<String> optionCoins;
 
   final appBar = AppBar(
-    title: const Text('Adicionar um novo objetivo', style: TextStyle(color: Colors.white,),),
+    title: const Text('Add a new objective', style: TextStyle(color: Colors.white,),),
     centerTitle: true,
     backgroundColor: Colors.blue,
   );
@@ -51,16 +51,16 @@ class AddPage extends GetView<AddController> {
             height: pageSize - (appBarSize + notifySize + 35),
             child: Column(
               children: [
-                getImagem(controller, context),
+                getImage(controller, context),
                 TextFormField(
                   controller: controller.descricaoController,
                   onChanged: controller.check,
                   decoration: const InputDecoration(
-                    labelText: 'Descrição',
+                    labelText: 'Description',
                   ),
                   validator: (String? value) {
                     if (value != null && value.isEmpty) {
-                      return 'Informe a descrição do objetivo';
+                      return 'Provide a description of the objective';
                     }
                     return null;
                   },
@@ -87,7 +87,7 @@ class AddPage extends GetView<AddController> {
                   ],
                 ),
                 const SizedBox(height: distance),
-                const Text('Selecione o peso do objetivo'),
+                const Text('Select goal weight'),
                 const SizedBox(height: distance),
                 WheelChooser.integer(
                   onValueChanged: controller.setPeso,
@@ -108,9 +108,8 @@ class AddPage extends GetView<AddController> {
                   ),
                   onPressed:
                       controller.enable.value ? () => controller.send() : null,
-                  child: const Text('Inserir'),
+                  child: const Text('Insert'),
                 ),
-                //const SizedBox(height: (distancia * 3)),
               ],
             ),
           ),
@@ -144,7 +143,7 @@ class AddPage extends GetView<AddController> {
             ),
           ],
         ),
-        items: opcoesCoins
+        items: optionCoins
             .map(
               (String item) => DropdownMenuItem<String>(
                 value: item,
@@ -162,9 +161,8 @@ class AddPage extends GetView<AddController> {
             .toList(),
         value: controller.selectCoin.value,
         onChanged: (String? value) {
-          printd("selecionou $value, ${opcoesCoins.indexOf(value!)}");
-          controller.setCoin(value);
-          controller.setCoinId(opcoesCoins.indexOf(value));
+          controller.setCoin(value!);
+          controller.setCoinId(optionCoins.indexOf(value));
         },
         buttonStyleData: ButtonStyleData(
           height: 50,
@@ -206,11 +204,10 @@ class AddPage extends GetView<AddController> {
     );
   }
 
-  Widget getImagem(
+  Widget getImage(
     AddController controller,
     BuildContext context,
   ) {
-    //printd("getImagem: ${controller.image}");
 
     if (controller.image.value.isEmpty ||
         controller.image.value.compareTo(" ") == 0) {
@@ -225,8 +222,6 @@ class AddPage extends GetView<AddController> {
       addImage(controller, context),
       controller
     );
-
-    //printd("size: $width, widget: ${image?.runtimeType}");
 
     return Padding(
       padding: const EdgeInsets.only(left: 15, top: 15),
@@ -247,7 +242,7 @@ class AddPage extends GetView<AddController> {
       onPressed: () async {
         await dialogGetImage(controller, context);
       },
-      child: const Text('Adicionar uma imagem'),
+      child: const Text('Add an image'),
     );
   }
 
@@ -255,7 +250,7 @@ class AddPage extends GetView<AddController> {
       AddController controller, BuildContext context) async {
     final result = await showConfirmationDialog<int>(
       context: context,
-      title: 'Selecione a fonte da imagem',
+      title: 'Select image source',
       actions: [
         ...List.generate(
           2,
@@ -267,26 +262,21 @@ class AddPage extends GetView<AddController> {
       ],
     );
 
-    //printd("result: $result");
-
     if (result == 1) {
       final url = await showTextInputDialog(
           context: context,
           textFields: const [
             DialogTextField(),
           ],
-          title: 'Digite ou cole o endereço web');
+          title: 'Type or paste the web address');
 
       if (url != null && url.isNotEmpty) {
         controller.setImage(url.first);
       }
 
-      //printd("url: $url");
     } else if (result == 0) {
       final ImagePicker picker = ImagePicker();
       final mediaFile = await picker.pickImage(source: ImageSource.gallery);
-
-      printd("media: ${mediaFile?.path}");
 
       if (mediaFile != null) {
         final bytes = io.File(mediaFile.path).readAsBytesSync();

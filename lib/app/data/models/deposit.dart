@@ -1,15 +1,15 @@
-class DeposityModel {
+class DepositModel {
   int id;
   num valor;
   String createAt;
 
-  DeposityModel({
+  DepositModel({
     required this.id,
     required this.valor,
     required this.createAt,
   });
 
-  factory DeposityModel.fromJson(Map<String, dynamic> json) => DeposityModel(
+  factory DepositModel.fromJson(Map<String, dynamic> json) => DepositModel(
         id: 1,
         valor: json['valor'],
         createAt: json['mes'],

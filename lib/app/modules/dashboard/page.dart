@@ -12,7 +12,6 @@ class DashboardPage extends GetView<DashboardController> {
 
   @override
   Widget build(BuildContext context) {
-    //printd("width: $width");
 
     return MaterialApp(
       home: DefaultTabController(
@@ -92,10 +91,6 @@ class DashboardPage extends GetView<DashboardController> {
     final listaTarget =
         inProgress ? controller.progressTargets : controller.completeTargets;
 
-    printd(
-        "inProgress: $inProgress, quant: ${listaTarget.length}, isLoading: ${controller.loading.value}" +
-            ", isLogged: ${authService.isLogged}");
-
     if (!authService.isLogged) {
       return const Align(
         alignment: Alignment.center,
@@ -148,7 +143,7 @@ class DashboardPage extends GetView<DashboardController> {
                       Routes.item,
                       arguments: arg,
                     );
-                    printd("edit: $edit");
+
                     if (edit != null && edit) controller.getAllTarget();
                   },
                   child: Card(

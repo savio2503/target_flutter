@@ -8,12 +8,12 @@ class ItemRepository {
   ItemRepository(this._api);
 
   Future<void> editarTarget(TargetRequestModel target) =>
-      _api.editarTarget(target);
+      _api.editTarget(target);
 
   Future<void> deleteTarget(int id) => _api.deleteTarget(id);
 
-  Future<List<DeposityModel>> getAllDeposity(int targetId) =>
-      _api.getAllDeposity(targetId);
+  Future<List<DepositModel>> getAllDeposity(int targetId) =>
+      _api.getAllDeposit(targetId);
 
-  Future<String> getImagem(int id) => _api.getImagem(id);
+  Future<String> getImagem(int id) => _api.getImage(id);
 }

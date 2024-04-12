@@ -16,7 +16,7 @@ String sumTotalList(List<TargetModel> list) {
 }
 
 Widget btnDeposit(DashboardController controller) {
-  //printd("btnDeposit");
+
   if (controller.sucessReturn.value && controller.countTargets.value != 0) {
     return SizedBox(
       width: 50,

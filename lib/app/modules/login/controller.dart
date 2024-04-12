@@ -17,7 +17,7 @@ class LoginController extends GetxController {
   var error = "".obs;
 
   LoginController() {
-    printd("token: ${_storageService.token}");
+
     if (_storageService.token == null || _storageService.token!.isEmpty) {
       setLogin();
     } else {
@@ -26,19 +26,16 @@ class LoginController extends GetxController {
   }
 
   void setLogin() {
-    printd("setLogin");
     _setStateNum(0);
     _setStateStr("Login");
   }
 
   void setSignup() {
-    printd("setSignup");
     _setStateNum(1);
     _setStateStr("Sign Up");
   }
 
   void setLogged() {
-    printd("setLogged");
     _setStateNum(2);
     _setStateStr("Logado");
   }
@@ -51,7 +48,6 @@ class LoginController extends GetxController {
 
     var result = false;
 
-    //printd("in login controller");
     var userLoginRequestMode = UserLoginRequestModel(
       email: emailController.text,
       password: passwordController.text,
@@ -63,7 +59,6 @@ class LoginController extends GetxController {
       error.value = e.toString();
     }
 
-    //printd("out login controller");
     if (_authService.isLogged) {
       await Get.find<CoinService>().getCoins();
       Get.back();
