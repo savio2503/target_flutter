@@ -7,4 +7,6 @@ class DashboardRepository {
   DashboardRepository(this._api);
 
   Future<List<TargetModel>> getTargets(bool? ative) => _api.getTargets(ative);
+
+  Future<void> comprar(int targetId, bool purchased) => _api.comprar(targetId, purchased);
 }

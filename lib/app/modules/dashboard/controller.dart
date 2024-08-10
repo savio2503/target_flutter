@@ -26,7 +26,16 @@ class DashboardController extends GetxController {
     super.onInit();
   }
 
-  getAllTarget() async {
+  Future<void> purchased(int targetId, bool purchased) async {
+
+    printd("chamando o comprar");
+    await _repository.comprar(targetId, purchased);
+
+    printd("chamando o getAllTarget");
+    await getAllTarget();
+}
+
+  Future<void> getAllTarget() async {
 
     final _authService = Get.find<AuthService>();
 
@@ -50,7 +59,7 @@ class DashboardController extends GetxController {
           listaTargets.addAll(value);
 
           listaTargets.forEach((target) {
-            if (target.ativo) {
+            if (!target.comprado) {
               progressTargets.add(target);
             } else {
               completeTargets.add(target);
@@ -65,7 +74,7 @@ class DashboardController extends GetxController {
           sumOfCompleted.value = 0;
 
           listaTargets.forEach((element) {
-            if (element.ativo) {
+            if (!element.comprado) {
               sumOfAssets.value += element.valorAtual;
             } else {
               sumOfCompleted.value += element.valor;

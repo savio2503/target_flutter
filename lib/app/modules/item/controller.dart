@@ -64,6 +64,14 @@ class ItemController extends GetxController implements ImageCallback {
     }
   }
 
+  Future<void> purchased(int targetId, bool purchased) async {
+
+    printd("chamando comprar");
+    await _repository.purchased(targetId, purchased);
+    printd("voltando");
+    Get.back(result: true);
+  }
+
   delete(int id) async {
     try {
       await _repository.deleteTarget(id);

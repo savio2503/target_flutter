@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:target/app/data/models/deposit.dart';
 import 'package:target/app/data/models/user.dart';
 import 'package:target/app/data/models/user_login_request.dart';
 import 'package:target/app/data/services/auth/repositoy.dart';
@@ -40,5 +41,9 @@ class AuthService extends GetxService {
     await _storageService.saveSession("");
 
     user.value = null;
+  }
+
+  Future<List<DepositModel>> getHistoricUser() async {
+    return await _repository.getHistoricUser();
   }
 }

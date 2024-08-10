@@ -28,7 +28,12 @@ class AddPage extends GetView<AddController> {
   late List<String> optionCoins;
 
   final appBar = AppBar(
-    title: const Text('Add a new objective', style: TextStyle(color: Colors.white,),),
+    title: const Text(
+      'Add a new objective',
+      style: TextStyle(
+        color: Colors.white,
+      ),
+    ),
     centerTitle: true,
     backgroundColor: Colors.blue,
   );
@@ -76,8 +81,10 @@ class AddPage extends GetView<AddController> {
                     Expanded(
                       child: TextFormField(
                         inputFormatters: [
-                          CurrencyTextInputFormatter(
-                              decimalDigits: 2, symbol: '')
+                          CurrencyTextInputFormatter.currency(
+                            decimalDigits: 2,
+                            symbol: '',
+                          )
                         ],
                         keyboardType: TextInputType.number,
                         onChanged: controller.check,
@@ -170,7 +177,9 @@ class AddPage extends GetView<AddController> {
           padding: const EdgeInsets.only(left: 14, right: 14),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: Colors.lightBlueAccent,),
+            border: Border.all(
+              color: Colors.lightBlueAccent,
+            ),
             color: Colors.white,
           ),
           elevation: 2,
@@ -208,7 +217,6 @@ class AddPage extends GetView<AddController> {
     AddController controller,
     BuildContext context,
   ) {
-
     if (controller.image.value.isEmpty ||
         controller.image.value.compareTo(" ") == 0) {
       return addImage(controller, context);
@@ -216,12 +224,8 @@ class AddPage extends GetView<AddController> {
 
     final double width = (MediaQuery.of(context).size.width - 40) * 0.75;
 
-    Widget? image = returnImageFromString(
-      controller.image.value,
-      width,
-      addImage(controller, context),
-      controller
-    );
+    Widget? image = returnImageFromString(controller.image.value, width,
+        addImage(controller, context), controller);
 
     return Padding(
       padding: const EdgeInsets.only(left: 15, top: 15),
@@ -273,7 +277,6 @@ class AddPage extends GetView<AddController> {
       if (url != null && url.isNotEmpty) {
         controller.setImage(url.first);
       }
-
     } else if (result == 0) {
       final ImagePicker picker = ImagePicker();
       final mediaFile = await picker.pickImage(source: ImageSource.gallery);

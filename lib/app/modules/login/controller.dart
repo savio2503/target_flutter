@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:target/app/data/models/deposit.dart';
 import 'package:target/app/data/models/user_login_request.dart';
 import 'package:target/app/data/services/auth/auth_service..dart';
 import 'package:target/app/data/services/coin/service.dart';
@@ -23,6 +24,10 @@ class LoginController extends GetxController {
     } else {
       setLogged();
     }
+  }
+
+  String getEmail() {
+    return emailController.text;
   }
 
   void setLogin() {
@@ -73,5 +78,9 @@ class LoginController extends GetxController {
     if (!_authService.isLogged) {
       Get.back();
     }
+  }
+
+  void getHistoricUser() async {
+    List<DepositModel> historics = await _authService.getHistoricUser();
   }
 }

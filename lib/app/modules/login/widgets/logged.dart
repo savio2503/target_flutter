@@ -11,10 +11,18 @@ class Logged extends StatelessWidget {
     return Center(
       child: Column(
         children: [
-          const Text(
-            "Logado",
+          const SizedBox(height: 15),
+          Text(
+            controller.getEmail(),
             textAlign: TextAlign.center,
           ),
+          const SizedBox(height: 15),
+          const Text("Historic", textAlign: TextAlign.center,),
+          const Divider(
+            height: 10,
+          ),
+          const SizedBox(height: 15),
+          const SizedBox(height: 15),
           ElevatedButton(
             style: ButtonStyle(
               foregroundColor: MaterialStateProperty.all<Color>(Colors.blue),

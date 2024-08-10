@@ -14,7 +14,7 @@ class TargetRequestModel {
     required this.posicao,
     required this.imagem,
     required this.coin,
-    required this.removebackground,
+    required this.removebackground
   });
 
   Map<String, dynamic> toJson() => {

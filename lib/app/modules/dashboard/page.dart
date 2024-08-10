@@ -12,7 +12,6 @@ class DashboardPage extends GetView<DashboardController> {
 
   @override
   Widget build(BuildContext context) {
-
     return MaterialApp(
       home: DefaultTabController(
         length: 2,
@@ -30,7 +29,7 @@ class DashboardPage extends GetView<DashboardController> {
               ),
             ),
             title: const Text(
-              'Objetivos',
+              'Targets',
               style: TextStyle(
                 color: Colors.white,
               ),
@@ -53,13 +52,13 @@ class DashboardPage extends GetView<DashboardController> {
             bottom: const TabBar(
               tabs: [
                 Text(
-                  "EM PROGRESSO",
+                  "IN PROGRESS",
                   style: TextStyle(
                     color: Colors.white,
                   ),
                 ),
                 Text(
-                  "CONCLUIDOS",
+                  "COMPLETED",
                   style: TextStyle(
                     color: Colors.white,
                   ),
@@ -69,8 +68,6 @@ class DashboardPage extends GetView<DashboardController> {
           ),
           floatingActionButton: Obx(() => btnDeposit(controller)),
           body: Obx(() {
-            print("call page dashboard");
-
             return TabBarView(
               children: [
                 //ProgressTarget(controller),
@@ -88,13 +85,13 @@ class DashboardPage extends GetView<DashboardController> {
   Widget bodyDashboard(BuildContext context, bool inProgress) {
     final double widthScreen = MediaQuery.of(context).size.width - 82;
     final authService = Get.find<AuthService>();
-    final listaTarget =
+    final listTarget =
         inProgress ? controller.progressTargets : controller.completeTargets;
 
     if (!authService.isLogged) {
       return const Align(
         alignment: Alignment.center,
-        child: Text("Por Favor, realizar login"),
+        child: Text("Please login"),
       );
     }
 
@@ -103,19 +100,18 @@ class DashboardPage extends GetView<DashboardController> {
         children: [
           Spacer(),
           Center(
-            child: Text('carregando'),
+            child: Text('loading'),
           ),
           Spacer(),
         ],
       );
     }
 
-    if (listaTarget.isEmpty) {
+    if (listTarget.isEmpty) {
       return Align(
         alignment: Alignment.center,
-        child: Text(inProgress
-            ? "Você não possui objetivos!"
-            : "Você não possui objetivos concluidos!"),
+        child: Text(
+            inProgress ? "You have no goals!" : "You have no completed goals!"),
       );
     }
 
@@ -124,7 +120,7 @@ class DashboardPage extends GetView<DashboardController> {
         Container(
           padding: const EdgeInsets.symmetric(vertical: 8.0),
           child: Text(
-              "Total Investido: ${NumberFormat.simpleCurrency().format(inProgress ? controller.sumOfAssets.value : controller.sumOfCompleted.value)}"),
+              "Total Invested: ${NumberFormat.simpleCurrency().format(inProgress ? controller.sumOfAssets.value : controller.sumOfCompleted.value)}"),
         ),
         Expanded(
           child: GridView.count(
@@ -134,11 +130,11 @@ class DashboardPage extends GetView<DashboardController> {
             mainAxisSpacing: 10,
             crossAxisCount: 2,
             children: List.generate(
-              listaTarget.length,
+              listTarget.length,
               (index) {
                 return GestureDetector(
                   onTap: () async {
-                    Map<String, dynamic> arg = {"target": listaTarget[index]};
+                    Map<String, dynamic> arg = {"target": listTarget[index]};
                     var edit = await Get.toNamed(
                       Routes.item,
                       arguments: arg,
@@ -156,7 +152,7 @@ class DashboardPage extends GetView<DashboardController> {
                             height: (widthScreen / 2) - 45,
                             width: (widthScreen / 2),
                             child: returnImageFromString(
-                              listaTarget[index].imagem,
+                              listTarget[index].imagem,
                               widthScreen,
                               const Icon(
                                 Icons.local_mall,
@@ -173,10 +169,29 @@ class DashboardPage extends GetView<DashboardController> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Text(
-                                "${listaTarget[index].posicao} - ${listaTarget[index].descricao}",
+                                "${listTarget[index].posicao} - ${listTarget[index].descricao}",
                                 overflow: TextOverflow.ellipsis,
                               ),
-                              fittedBox(listaTarget[index]),
+                              if (listTarget[index].porcetagem >= 100.0 &&
+                                  listTarget[index].comprado == false)
+                                SizedBox(
+                                  width: (widthScreen / 2) - 20,
+                                  height: 20,
+                                  child: ElevatedButton(
+                                    onPressed: () async {
+                                      await controller.purchased(
+                                          listTarget[index].id, true);
+                                    },
+                                    child: const Text('Buy'),
+                                    style: ButtonStyle(
+                                      foregroundColor:
+                                          MaterialStateProperty.all<Color>(
+                                              Colors.green),
+                                    ),
+                                  ),
+                                )
+                              else
+                                fittedBox(listTarget[index]),
                             ],
                           ),
                         ),

@@ -17,11 +17,12 @@ import 'package:target/app/tools/functions.dart';
 import 'package:wheel_chooser/wheel_chooser.dart';
 
 class ItemPage extends GetView<ItemController> {
-  late List<String> opcoesCoins;
-  late String valorDepositado;
+  late List<String> optionsCoins;
+  late String amountDeposited;
   late String coinstr;
   late int id;
-  late bool concluido;
+  late bool concluded;
+  late bool comprado;
 
   ItemPage({super.key}) {
     Map<String, dynamic> args = Get.arguments ?? {};
@@ -36,24 +37,26 @@ class ItemPage extends GetView<ItemController> {
     id = target.id;
 
     List<CoinModel> coins = Get.find<CoinService>().coins;
-    opcoesCoins = <String>[];
+    optionsCoins = <String>[];
 
     for (CoinModel coin in coins) {
-      opcoesCoins.add(coin.symbol);
+      optionsCoins.add(coin.symbol);
     }
 
     var coinId = (target.coin - 1).toInt();
 
-    controller.setCoin(opcoesCoins[coinId]);
+    controller.setCoin(optionsCoins[coinId]);
     controller.setCoinId(coinId);
     controller.visibleRemove.value = target.removebackground == 0;
 
-    valorDepositado = NumberFormat.simpleCurrency(
+    amountDeposited = NumberFormat.simpleCurrency(
             name: coins[(target.coin - 1).toInt()].symbol, decimalDigits: 2)
         .format(((target.valor * target.porcetagem) / 100));
     coinstr = coins[(target.coin - 1).toInt()].name;
 
-    concluido = !target.ativo;
+    concluded = !target.ativo;
+
+    comprado = target.comprado;
   }
 
   Future<void> processImage(int id) async {
@@ -65,7 +68,7 @@ class ItemPage extends GetView<ItemController> {
 
   @override
   Widget build(BuildContext context) {
-    const distancia = 20.0;
+    const distance = 20.0;
 
     processImage(id);
 
@@ -90,7 +93,7 @@ class ItemPage extends GetView<ItemController> {
                 const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
             child: Column(
               children: [
-                getImagem(context),
+                getImage(context),
                 TextFormField(
                   controller: controller.descricaoController,
                   decoration: const InputDecoration(
@@ -103,9 +106,9 @@ class ItemPage extends GetView<ItemController> {
                     return null;
                   },
                   onChanged: (value) => controller.setDescricao(value),
-                  readOnly: concluido,
+                  readOnly: concluded,
                 ),
-                const SizedBox(height: distancia),
+                const SizedBox(height: distance),
                 Row(
                   children: [
                     SizedBox(
@@ -116,21 +119,33 @@ class ItemPage extends GetView<ItemController> {
                     Expanded(
                       child: TextFormField(
                         inputFormatters: [
-                          CurrencyTextInputFormatter(
+                          CurrencyTextInputFormatter.currency(
                             decimalDigits: 2,
                             symbol: '',
                           ),
                         ],
                         keyboardType: TextInputType.number,
                         controller: controller.valorController,
-                        readOnly: concluido,
+                        readOnly: concluded,
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: distancia),
-                if (!concluido) editPesoAndButton(controller),
-                getHistoric(controller, distancia, id),
+                const SizedBox(height: distance),
+                if (!concluded)
+                  editPesoAndButton(controller)
+                else if (!comprado)
+                  ElevatedButton(
+                    onPressed: () async {
+                      await controller.purchased(id, true);
+                    },
+                    child: const Text('Buy'),
+                    style: ButtonStyle(
+                      foregroundColor:
+                          MaterialStateProperty.all<Color>(Colors.green),
+                    ),
+                  ),
+                getHistoric(controller, distance, id),
                 const SizedBox(height: 30),
               ],
             ),
@@ -141,11 +156,11 @@ class ItemPage extends GetView<ItemController> {
   }
 
   Widget editPesoAndButton(ItemController controller) {
-    const double distancia = 20;
+    const double distance = 20;
     return Column(
       children: [
         const Text('Select goal weight'),
-        const SizedBox(height: distancia),
+        const SizedBox(height: distance),
         WheelChooser.integer(
           onValueChanged: controller.setPeso,
           maxValue: 10,
@@ -156,7 +171,7 @@ class ItemPage extends GetView<ItemController> {
           listHeight: 200,
           listWidth: 50,
         ),
-        const SizedBox(height: distancia * 2),
+        const SizedBox(height: distance * 2),
         Row(
           children: [
             const Spacer(),
@@ -218,7 +233,7 @@ class ItemPage extends GetView<ItemController> {
             ),
           ],
         ),
-        items: opcoesCoins
+        items: optionsCoins
             .map(
               (String item) => DropdownMenuItem<String>(
                 value: item,
@@ -237,7 +252,7 @@ class ItemPage extends GetView<ItemController> {
         value: controller.selectCoin.value,
         onChanged: (String? value) {
           controller.setCoin(value!);
-          controller.setCoinId(opcoesCoins.indexOf(value));
+          controller.setCoinId(optionsCoins.indexOf(value));
         },
         buttonStyleData: ButtonStyleData(
           height: 50,
@@ -307,7 +322,6 @@ class ItemPage extends GetView<ItemController> {
       if (url != null && url.isNotEmpty) {
         controller.setImage(url.first);
       }
-
     } else if (result == 0) {
       final ImagePicker picker = ImagePicker();
       final mediaFile = await picker.pickImage(source: ImageSource.gallery);
@@ -332,10 +346,9 @@ class ItemPage extends GetView<ItemController> {
     );
   }
 
-  Widget getImagem(
+  Widget getImage(
     BuildContext context,
   ) {
-
     if (controller.image.value.isEmpty ||
         controller.image.value.compareTo(" ") == 0) {
       return addImage(context);
@@ -365,7 +378,6 @@ class ItemPage extends GetView<ItemController> {
                           MaterialStateProperty.all<Color>(Colors.blue),
                     ),
                     onPressed: () async {
-
                       controller.txtRemove.value = "Loading...";
 
                       String source = controller.imageBase64.isEmpty
@@ -403,15 +415,14 @@ class ItemPage extends GetView<ItemController> {
     }
   }
 
-  Widget getHistoric(ItemController controller, double distancia, int id) {
+  Widget getHistoric(ItemController controller, double distance, int id) {
     return Column(
       children: [
-        SizedBox(height: distancia),
+        SizedBox(height: distance),
         const Divider(
           height: 10,
         ),
-        //SizedBox(height: distancia),
-        Text('Total deposited in $coinstr was: $valorDepositado'),
+        Text('Total deposited in $coinstr was: $amountDeposited'),
         const Divider(
           height: 10,
         ),
@@ -419,7 +430,7 @@ class ItemPage extends GetView<ItemController> {
           "Historic",
           textAlign: TextAlign.center,
         ),
-        SizedBox(height: distancia),
+        SizedBox(height: distance),
         FutureBuilder(
           builder: (context, snapshot) {
             if (snapshot.hasData) {

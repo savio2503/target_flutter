@@ -19,6 +19,7 @@ class Api extends GetConnect {
   void onInit() {
     //server address
     httpClient.baseUrl = 'http://192.168.3.20:3333/';
+    //httpClient.baseUrl = 'http://192.168.3.19:3333/';
 
     httpClient.addRequestModifier((Request request) {
       request.headers['Accept'] = 'application/json';
@@ -78,6 +79,12 @@ class Api extends GetConnect {
     }
 
     return targets;
+  }
+  
+  Future<void> comprar(int id, bool purchased) async {
+    var response = _errorHandler(await put('comprar/$id/${purchased ? 1 : 0}', '{}', headers: getHeaders()));
+
+    printd("comprar: $response");
   }
 
   Future<String> getImage(int targetId) async {
@@ -203,6 +210,14 @@ class Api extends GetConnect {
     _errorHandler(await delete('target/$id', headers: getHeaders()));
 
     return;
+  }
+
+  Future<List<DepositModel>> getHistoricUser() async {
+
+    List<DepositModel> historic = [];
+
+    return historic;
+
   }
 
   Future<List<CoinModel>> getAllCoins() async {

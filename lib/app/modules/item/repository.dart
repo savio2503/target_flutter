@@ -16,4 +16,6 @@ class ItemRepository {
       _api.getAllDeposit(targetId);
 
   Future<String> getImagem(int id) => _api.getImage(id);
+
+  Future<void> purchased(int targetId, bool purchased) => _api.comprar(targetId, purchased);
 }
